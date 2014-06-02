@@ -16,10 +16,21 @@ out/
 # Local configuration file (sdk path, etc)
 local.properties
 
-# Eclipse project files
-.classpath
 .project
+.classpath
+.settings
+target/
+libs/
+classes/
+gen-external-apklibs/
 
-# IntellJ project files
-.iml
-.idea
+# IDEA Ignores
+*.iml
+*.ipr
+*.iws
+.idea/
+local.properties
+project.properties
+
+# MAC
+*.DS_Store
