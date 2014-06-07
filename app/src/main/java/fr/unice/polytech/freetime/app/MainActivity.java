@@ -75,7 +75,7 @@ public class MainActivity extends ActionBarActivity {
                 System.out.println("Start date :" + startDay + "/"  + startMonth + "/" + startYear);
                 System.out.println("End date :" + endDay + "/" + endMonth + "/" + endYear);
 
-                ftcService.createEvent(title, startDay, startMonth, startYear, endDay, endMonth, endYear);
+                ftcService.createEvent(title, startYear, startMonth, startDay, endYear, endMonth, endDay);
             }
         });
 

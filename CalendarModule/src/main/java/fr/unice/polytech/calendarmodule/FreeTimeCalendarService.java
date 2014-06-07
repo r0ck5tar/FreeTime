@@ -35,9 +35,11 @@ public class FreeTimeCalendarService extends Service {
     private static final int PROJECTION_DISPLAY_NAME_INDEX = 2;
     private static final int PROJECTION_OWNER_ACCOUNT_INDEX = 3;
 
+    private long freeTimeCalendarId;
+
     @Override
     public IBinder onBind(Intent intent) {
-        return binder;
+       freeTimeCalendarId = getFreeTimeCalendarId(); return binder;
     }
 
     @TargetApi(Build.VERSION_CODES.ICE_CREAM_SANDWICH)
@@ -113,50 +115,44 @@ public class FreeTimeCalendarService extends Service {
         }
     }
 
-    public long createEvent(String title, int startDay, int startMonth, int startYear,
-                            int endDay, int endMonth, int endYear) {
+    public long createEvent(String title, int startYear, int startMonth, int startDay,
+                            int endYear, int endMonth, int endDay) {
         long calId = getFreeTimeCalendarId();
 
-        Calendar cal = new GregorianCalendar(startYear, startMonth, startDay);
-        cal.setTimeZone(TimeZone.getTimeZone("UTC"));
-        /*
-        cal.set(Calendar.HOUR, );
-        cal.set(Calendar.MINUTE, 0);
-        cal.set(Calendar.SECOND, 0);
-        cal.set(Calendar.MILLISECOND, 0);
-        */
-        long start = cal.getTimeInMillis();
+        EventBuilder eb = new EventBuilder(calId);
+        return eb.createEvent(title)
+                .startY(startYear).startM(startMonth).startD(startDay)
+                .endY(endYear).endM(endMonth).endD(endDay)
+                .timeZone(TimeZone.getDefault().getID())
+                .finalizeStartTime().finalizeEndTime()
+                .allDay(true).description("description goes here")
+                .availability(Events.AVAILABILITY_BUSY)
+                .organizer("demo@freetime.com")
+                .finalizeEvent(getContentResolver());
+    }
 
-        cal = new GregorianCalendar(endYear, endMonth, endDay);
-        cal.setTimeZone(TimeZone.getTimeZone("UTC"));
-        /*
-        cal.set(Calendar.HOUR, 0);
-        cal.set(Calendar.MINUTE, 0);
-        cal.set(Calendar.SECOND, 0);
-        cal.set(Calendar.MILLISECOND, 0);
-        */
-        long end = cal.getTimeInMillis();
+    public long createEvent(String title, int startYear, int startMonth, int startDay,
+                            int startHour, int startMinute, int startSecond,
+                            int endYear, int endMonth, int endDay,
+                            int endHour, int endMinute, int endSecond) {
 
-        ContentValues values = new ContentValues();
-        values.put(Events.DTSTART, start);
-        values.put(Events.DTEND, end);
+        long calId = getFreeTimeCalendarId();
+
+        EventBuilder eb = new EventBuilder(calId);
+        return eb.createEvent(title)
+               .startY(startYear).startM(startMonth).startD(startDay)
+               .startH(startHour).startMin(startMinute).startS(startSecond)
+               .endY(endYear).endM(endMonth).endD(endDay)
+               .endH(endHour).endMin(endMinute).endS(endSecond)
+               .timeZone(TimeZone.getDefault().getID())
+               .finalizeStartTime().finalizeEndTime()
+               .allDay(false).description("description goes here")
+               .availability(Events.AVAILABILITY_BUSY)
+               .organizer("demo@freetime.com")
+               .finalizeEvent(getContentResolver());
+
+        //ContentValues values = new ContentValues();
         //values.put(Events.RRULE, "FREQ=DAILY;COUNT=20;BYDAY=MO,TU,WE,TH,FR;WKST=MO");
-        values.put(Events.TITLE, title);
-        values.put(Events.EVENT_LOCATION, "Münster");
-        values.put(Events.CALENDAR_ID, calId);
-        values.put(Events.EVENT_TIMEZONE, "Europe/Paris");
-        values.put(Events.DESCRIPTION, "The agenda or some description of the event");
-        // reasonable defaults exist:
-        values.put(Events.ACCESS_LEVEL, Events.ACCESS_PRIVATE);
-        values.put(Events.SELF_ATTENDEE_STATUS, Events.STATUS_CONFIRMED);
-        values.put(Events.ALL_DAY, 1);
-        values.put(Events.ORGANIZER, "demo@freetime.com");
-        values.put(Events.GUESTS_CAN_INVITE_OTHERS, 1);
-        values.put(Events.GUESTS_CAN_MODIFY, 1);
-        values.put(Events.AVAILABILITY, Events.AVAILABILITY_BUSY);
-        Uri uri = getContentResolver().insert(Events.CONTENT_URI, values);
-        long eventId = new Long(uri.getLastPathSegment());
-
-        return eventId;
+        //values.put(Events.EVENT_LOCATION, "Münster");
     }
 }
