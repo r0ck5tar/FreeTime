@@ -34,3 +34,5 @@ project.properties
 
 # MAC
 *.DS_Store
+
+.gradle
