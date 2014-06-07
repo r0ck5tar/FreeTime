@@ -43,18 +43,20 @@ public class FreeTimeCalendarService extends Service {
     }
 
     @TargetApi(Build.VERSION_CODES.ICE_CREAM_SANDWICH)
-    public void getAllCalendars() {
+    public Cursor getAllCalendars() {
 
         String[] projection =
                 new String[]{
-                        CalendarContract.Calendars._ID,
+                        //CalendarContract.Calendars._ID,
                         CalendarContract.Calendars.NAME,
                         CalendarContract.Calendars.ACCOUNT_NAME,
-                        CalendarContract.Calendars.ACCOUNT_TYPE};
+                        //CalendarContract.Calendars.ACCOUNT_TYPE
+                };
 
         Cursor calCursor = getContentResolver().query(CalendarContract.Calendars.CONTENT_URI,
                 projection, null, null,
                 CalendarContract.Calendars._ID + " ASC");
+        /*
         if (calCursor.moveToFirst()) {
             do {
                 // Get the field values
@@ -71,6 +73,9 @@ public class FreeTimeCalendarService extends Service {
 
             } while (calCursor.moveToNext());
         }
+        */
+
+        return calCursor;
     }
 
     public Uri createCalendar(){
