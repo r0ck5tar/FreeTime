@@ -36,3 +36,4 @@ project.properties
 *.DS_Store
 
 .gradle/
+.gradle\
