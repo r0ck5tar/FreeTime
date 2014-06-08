@@ -21,6 +21,10 @@
             android:name=".ImportCalendarActivity"
             android:label="@string/title_activity_import_calendar" >
         </activity>
+        <activity
+            android:name=".FreeTimeCalendarViewActivity"
+            android:label="@string/title_activity_free_time_calendar_view" >
+        </activity>
     </application>
 
     <uses-sdk android:minSdkVersion="14" />

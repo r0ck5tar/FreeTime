@@ -11,6 +11,7 @@ import android.os.Build;
 import android.os.IBinder;
 import android.provider.CalendarContract;
 import android.provider.CalendarContract.*;
+import android.widget.CursorAdapter;
 import android.widget.Toast;
 
 import java.util.Calendar;
@@ -101,11 +102,17 @@ public class FreeTimeCalendarService extends Service {
         }
     }
 
+    public Cursor getAllEventsFromCalendar(long calId) {
+        String[] projection = new String[] {Events._ID, Events.TITLE, Events.DTSTART, Events.DTEND, Events.RRULE};
+        Cursor cursor = getContentResolver().query(Events.CONTENT_URI, projection, Events.CALENDAR_ID + " = ? ", new String[]{Long.toString(calId)}, Events.DTSTART + " ASC");
+        return cursor;
+    }
+
     public long createEvent(String title, int startYear, int startMonth, int startDay,
                             int endYear, int endMonth, int endDay) {
-        long calId = getFreeTimeCalendarId();
+        //long calId = getFreeTimeCalendarId();
 
-        EventBuilder eb = new EventBuilder(calId);
+        EventBuilder eb = new EventBuilder(freeTimeCalendarId);
         return eb.createEvent(title)
                 .startY(startYear).startM(startMonth).startD(startDay)
                 .endY(endYear).endM(endMonth).endD(endDay)

@@ -8,5 +8,6 @@
     <string name="import_calendar_button">Import Calendar</string>
     <string name="service_connected">FreeTimeCalendarService connected</string>
     <string name="service_disconnected">FreeTimeCalendarService disconnected</string>
+    <string name="title_activity_free_time_calendar_view">FreeTimeCalendarView</string>
 
 </resources>
