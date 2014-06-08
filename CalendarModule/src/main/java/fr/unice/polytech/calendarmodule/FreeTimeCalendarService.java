@@ -47,15 +47,14 @@ public class FreeTimeCalendarService extends Service {
 
         String[] projection =
                 new String[]{
-                        //CalendarContract.Calendars._ID,
+                        CalendarContract.Calendars._ID,
                         CalendarContract.Calendars.NAME,
                         CalendarContract.Calendars.ACCOUNT_NAME,
                         //CalendarContract.Calendars.ACCOUNT_TYPE
                 };
 
         Cursor calCursor = getContentResolver().query(CalendarContract.Calendars.CONTENT_URI,
-                projection, null, null,
-                CalendarContract.Calendars._ID + " ASC");
+                projection, null, null, Calendars.NAME + " ASC");
         /*
         if (calCursor.moveToFirst()) {
             do {

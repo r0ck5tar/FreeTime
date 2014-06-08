@@ -17,65 +17,27 @@ import android.widget.Toast;
 import fr.unice.polytech.calendarmodule.FreeTimeCalendarService;
 
 public class MainActivity extends ActionBarActivity {
-    private FreeTimeCalendarService ftcService;
-    private boolean bound = false;
+    private FreeTimeApplication app;
     private DatePicker startDatePicker;
     private DatePicker endDatePicker;
     private EditText eventTitle;
-
-
-    private ServiceConnection ftcServiceConnection = new ServiceConnection() {
-        @Override
-        public void onServiceConnected(ComponentName componentName, IBinder service) {
-            ftcService = ((FreeTimeCalendarService.FreeTimeBinder)service).getService();
-
-            Toast.makeText(getApplicationContext(), R.string.service_connected, Toast.LENGTH_LONG).show();
-        }
-
-        @Override
-        public void onServiceDisconnected(ComponentName componentName) {
-            ftcService = null;
-
-            Toast.makeText(getApplicationContext(), R.string.service_disconnected, Toast.LENGTH_LONG).show();
-        }
-    };
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        bound = getApplicationContext().bindService(new Intent(getApplicationContext(), FreeTimeCalendarService.class), ftcServiceConnection, Context.BIND_AUTO_CREATE);
+        app = (FreeTimeApplication)getApplication();
 
         eventTitle = (EditText) findViewById(R.id.eventTitle);
         startDatePicker = (DatePicker) findViewById(R.id.startdatePicker);
         endDatePicker = (DatePicker) findViewById(R.id.endDatePicker);
     }
 
-    @Override
-    public void onPause() {
-        super.onPause();
-        if(bound) {
-            getApplicationContext().unbindService(ftcServiceConnection);
-            bound = false;
-        }
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-        if(!bound){
-            getApplicationContext().bindService(new Intent(getApplicationContext(), FreeTimeCalendarService.class), ftcServiceConnection, Context.BIND_AUTO_CREATE);
-        }
-    }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
-
-        getApplicationContext().unbindService(ftcServiceConnection);
-        bound = false;
-
     }
 
     @Override
@@ -99,7 +61,7 @@ public class MainActivity extends ActionBarActivity {
         System.out.println("Start date :" + startDay + "/"  + startMonth + "/" + startYear);
         System.out.println("End date :" + endDay + "/" + endMonth + "/" + endYear);
 
-        ftcService.createEvent(title, startYear, startMonth, startDay, endYear, endMonth, endDay);
+        app.getFtcService().createEvent(title, startYear, startMonth, startDay, endYear, endMonth, endDay);
     }
 
     public void onImportCalendarButton(View view){

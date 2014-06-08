@@ -8,6 +8,7 @@ import android.content.ServiceConnection;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.os.IBinder;
+import android.provider.CalendarContract;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -23,33 +24,15 @@ import fr.unice.polytech.calendarmodule.FreeTimeCalendarService;
 
 public class ImportCalendarActivity extends Activity {
     private FreeTimeCalendarService ftcService;
-    private boolean bound = false;
     private Cursor calCursor;
     private ListView calendarList;
-
-    private ServiceConnection ftcServiceConnection = new ServiceConnection() {
-        @Override
-        public void onServiceConnected(ComponentName componentName, IBinder service) {
-            ftcService = ((FreeTimeCalendarService.FreeTimeBinder)service).getService();
-
-            Toast.makeText(getApplicationContext(), "@string/service_connected", Toast.LENGTH_LONG).show();
-        }
-
-        @Override
-        public void onServiceDisconnected(ComponentName componentName) {
-            ftcService = null;
-
-            Toast.makeText(getApplicationContext(), "@string/service_disconnected", Toast.LENGTH_LONG).show();
-        }
-    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_import_calendar);
-        do {
-            bound = getApplicationContext().bindService(new Intent(getApplicationContext(), FreeTimeCalendarService.class), ftcServiceConnection, Context.BIND_AUTO_CREATE);
-        } while(bound == false);
+        ftcService = ((FreeTimeApplication)getApplication()).getFtcService();
+
         calCursor = ftcService.getAllCalendars();
         System.out.println("about to crash");
         int[] to = new int[] {R.id.calendar_name, R.id.account_name};
@@ -62,7 +45,7 @@ public class ImportCalendarActivity extends Activity {
             public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
                 Cursor cursor = (Cursor) calendarList.getItemAtPosition(position);
 
-                String calendarName = cursor.getString(cursor.getColumnIndexOrThrow("calendar_name"));
+                String calendarName = cursor.getString(cursor.getColumnIndexOrThrow(CalendarContract.Calendars.NAME));
 
                 Toast.makeText(getApplicationContext(), "Selected calendar " + calendarName, Toast.LENGTH_LONG).show();
             }
