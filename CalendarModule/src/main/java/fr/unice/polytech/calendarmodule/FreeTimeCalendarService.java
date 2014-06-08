@@ -43,34 +43,20 @@ public class FreeTimeCalendarService extends Service {
     }
 
     @TargetApi(Build.VERSION_CODES.ICE_CREAM_SANDWICH)
-    public void getAllCalendars() {
+    public Cursor getAllCalendars() {
 
         String[] projection =
                 new String[]{
                         CalendarContract.Calendars._ID,
                         CalendarContract.Calendars.NAME,
                         CalendarContract.Calendars.ACCOUNT_NAME,
-                        CalendarContract.Calendars.ACCOUNT_TYPE};
+                        //CalendarContract.Calendars.ACCOUNT_TYPE
+                };
 
         Cursor calCursor = getContentResolver().query(CalendarContract.Calendars.CONTENT_URI,
-                projection, null, null,
-                CalendarContract.Calendars._ID + " ASC");
-        if (calCursor.moveToFirst()) {
-            do {
-                // Get the field values
-                long calID = calCursor.getLong(PROJECTION_ID_INDEX);
-                String displayName = calCursor.getString(PROJECTION_DISPLAY_NAME_INDEX);
-                String accountName = calCursor.getString(PROJECTION_ACCOUNT_NAME_INDEX);
-                String ownerName = calCursor.getString(PROJECTION_OWNER_ACCOUNT_INDEX);
+                projection, null, null, Calendars.NAME + " ASC");
 
-
-                System.out.println(calID);
-                System.out.println(displayName);
-                System.out.println(accountName);
-                System.out.println(ownerName);
-
-            } while (calCursor.moveToNext());
-        }
+        return calCursor;
     }
 
     public Uri createCalendar(){
@@ -150,9 +136,5 @@ public class FreeTimeCalendarService extends Service {
                .availability(Events.AVAILABILITY_BUSY)
                .organizer("demo@freetime.com")
                .finalizeEvent(getContentResolver());
-
-        //ContentValues values = new ContentValues();
-        //values.put(Events.RRULE, "FREQ=DAILY;COUNT=20;BYDAY=MO,TU,WE,TH,FR;WKST=MO");
-        //values.put(Events.EVENT_LOCATION, "Münster");
     }
 }
