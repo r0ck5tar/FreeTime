@@ -13,7 +13,7 @@ public class MainActivity extends ActionBarActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_bienvenue);
+        setContentView(R.layout.activity_bienvenue2);
     }
 
 
@@ -39,7 +39,7 @@ public class MainActivity extends ActionBarActivity {
 
 
     private void onClick_start(View view){
-        Intent intent= new Intent(this, FirstParam.class);
+        Intent intent= new Intent(this, FirstParam2.class);
         startActivity(intent);
     }
 

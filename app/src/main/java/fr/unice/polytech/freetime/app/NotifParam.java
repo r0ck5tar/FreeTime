@@ -1,17 +1,22 @@
 package fr.unice.polytech.freetime.app;
 
+import android.content.Intent;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 
 
 public class NotifParam extends ActionBarActivity {
+
+    private User user;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_notif_param);
+        user = (User) getIntent().getSerializableExtra("userParam");
     }
 
 
@@ -35,4 +40,13 @@ public class NotifParam extends ActionBarActivity {
         return super.onOptionsItemSelected(item);
     }
 
+    public void onClick_okValid(View view){
+        user.setNotificationParam(true);
+        int step=user.getStep();
+        //user.setStep(++step);
+        Intent intent= new Intent(this, FirstParam2.class);
+        intent.putExtra("user",user);
+        startActivity(intent);
+
+    }
 }
