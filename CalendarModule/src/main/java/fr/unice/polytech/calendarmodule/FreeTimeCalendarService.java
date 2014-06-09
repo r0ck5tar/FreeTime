@@ -103,9 +103,31 @@ public class FreeTimeCalendarService extends Service {
     }
 
     public Cursor getAllEventsFromCalendar(long calId) {
-        String[] projection = new String[] {Events._ID, Events.TITLE, Events.DTSTART, Events.DTEND, Events.RRULE};
-        Cursor cursor = getContentResolver().query(Events.CONTENT_URI, projection, Events.CALENDAR_ID + " = ? ", new String[]{Long.toString(calId)}, Events.DTSTART + " ASC");
+        //String[] projection = new String[] {Events._ID, Events.TITLE, Events.DTSTART, Events.DTEND, Events.RRULE};
+        Cursor cursor = getContentResolver().query(Events.CONTENT_URI, null, Events.CALENDAR_ID + " = ? ", new String[]{Long.toString(calId)}, Events.DTSTART + " ASC");
         return cursor;
+    }
+
+    public void importEventsFromCalendar(long calId){
+        Cursor ec = getAllEventsFromCalendar(calId);
+
+        if(ec.moveToFirst()) {
+            do{
+                String title = ec.getString(ec.getColumnIndex(Events.TITLE));
+                long start = ec.getLong(ec.getColumnIndex(Events.DTSTART));
+                long end = ec.getLong(ec.getColumnIndex(Events.DTEND));
+                String timeZone = ec.getString(ec.getColumnIndex(Events.EVENT_TIMEZONE));
+                String location = ec.getString(ec.getColumnIndex(Events.EVENT_LOCATION));
+                int allDay = ec.getInt(ec.getColumnIndex(Events.ALL_DAY));
+                String rRule = ec.getString(ec.getColumnIndex(Events.RRULE));
+                int availability = ec.getInt(ec.getColumnIndex(Events.AVAILABILITY));
+
+                new EventBuilder(freeTimeCalendarId).createEvent(title).startDT(start).endDT(end)
+                    .timeZone(timeZone).location(location).allDay(allDay==1).rRule(rRule)
+                    .availability(availability).finalizeEvent(getContentResolver());
+
+            }while(ec.moveToNext());
+        }
     }
 
     public long createEvent(String title, int startYear, int startMonth, int startDay,

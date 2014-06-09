@@ -44,6 +44,7 @@ public class ImportCalendarActivity extends Activity {
                 long id = cursor.getLong(cursor.getColumnIndexOrThrow(CalendarContract.Calendars._ID));
                 Intent intent = new Intent(getApplicationContext(), FreeTimeCalendarViewActivity.class);
                 intent.putExtra("calId", id);
+                ftcService.importEventsFromCalendar(id);
                 startActivity(intent);
                 Toast.makeText(getApplicationContext(), "Selected calendar " + calendarName + " id: " + id, Toast.LENGTH_LONG).show();
             }
