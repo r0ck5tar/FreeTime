@@ -9,6 +9,8 @@
 *.class
 
 # generated files
+*.bin
+*.lock
 bin/
 gen/
 out/
@@ -17,6 +19,7 @@ out/
 local.properties
 
 .project
+.gradle/*
 .classpath
 .settings
 target/
