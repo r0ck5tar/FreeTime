@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
@@ -24,19 +25,21 @@ public class FirstParam2 extends ActionBarActivity {
         setContentView(R.layout.activity_first_param2);
 
         user= (User) getIntent().getSerializableExtra("user");
+        EditText textName= (EditText) findViewById(R.id.editText_name);
 
 
         int step = user.getStep();
         switch (step){
+
+            case 0:break;
             case 1:LinearLayout l1= (LinearLayout) findViewById(R.id.ll1);
                 l1.setVisibility(View.VISIBLE);
+                textName.setText(user.getName());
                 if(user.isImportCal()){
                     ImageButton ib= (ImageButton) findViewById(R.id.done_button1);
                     ib.setVisibility(View.VISIBLE);
 
                 }
-                LinearLayout l21= (LinearLayout) findViewById(R.id.ll2);
-                l21.setVisibility(View.VISIBLE);
                 break;
 
             case 2:
@@ -44,6 +47,8 @@ public class FirstParam2 extends ActionBarActivity {
                 l12.setVisibility(View.VISIBLE);
                 LinearLayout l2= (LinearLayout) findViewById(R.id.ll2);
                 l2.setVisibility(View.VISIBLE);
+                textName.setText(user.getName());
+
                 if(user.isImportCal()){
                     ImageButton ib= (ImageButton) findViewById(R.id.done_button1);
                     ib.setVisibility(View.VISIBLE);
@@ -53,8 +58,6 @@ public class FirstParam2 extends ActionBarActivity {
                     ib.setVisibility(View.VISIBLE);
 
                 }
-                LinearLayout l32= (LinearLayout) findViewById(R.id.ll3);
-                l32.setVisibility(View.VISIBLE);
                 break;
 
             case 3:
@@ -64,6 +67,8 @@ public class FirstParam2 extends ActionBarActivity {
                 l23.setVisibility(View.VISIBLE);
                 LinearLayout l3= (LinearLayout) findViewById(R.id.ll3);
                 l3.setVisibility(View.VISIBLE);
+                textName.setText(user.getName());
+
                 if(user.isImportCal()){
                     ImageButton ib= (ImageButton) findViewById(R.id.done_button1);
                     ib.setVisibility(View.VISIBLE);
@@ -76,9 +81,6 @@ public class FirstParam2 extends ActionBarActivity {
                     ImageButton ib= (ImageButton) findViewById(R.id.done_button3);
                     ib.setVisibility(View.VISIBLE);
                 }
-                LinearLayout l43= (LinearLayout) findViewById(R.id.ll4);
-                l43.setVisibility(View.VISIBLE);
-
                 break;
 
             case 4:
@@ -90,6 +92,8 @@ public class FirstParam2 extends ActionBarActivity {
                 l34.setVisibility(View.VISIBLE);
                 LinearLayout l4= (LinearLayout) findViewById(R.id.ll4);
                 l4.setVisibility(View.VISIBLE);
+                textName.setText(user.getName());
+
                 if(user.isImportCal()){
                     ImageButton ib= (ImageButton) findViewById(R.id.done_button1);
                     ib.setVisibility(View.VISIBLE);
@@ -108,7 +112,8 @@ public class FirstParam2 extends ActionBarActivity {
                     ib.setVisibility(View.VISIBLE);
                 }
 
-            default:break;
+            default:
+                break;
         }
 
     }
@@ -136,7 +141,7 @@ public class FirstParam2 extends ActionBarActivity {
 
 
     public void onClick_text(View view){
-        TextView textName= (TextView) findViewById(R.id.editText_name);
+        EditText textName= (EditText) findViewById(R.id.editText_name);
         String name= textName.getText().toString();
             if(name.equals("Enter your name")) {
                 textName.setText("");
@@ -170,6 +175,8 @@ public class FirstParam2 extends ActionBarActivity {
 
             case 3:LinearLayout l4= (LinearLayout) findViewById(R.id.ll4);
             l4.setVisibility(View.VISIBLE);
+                Button bNext= (Button) findViewById(R.id.button_next);
+                bNext.setText("Finish");
                 user.setStep(++step);break;
 
             //prochaine etape
@@ -182,6 +189,27 @@ public class FirstParam2 extends ActionBarActivity {
 
     public void onClick_import(View view){
         Intent intent= new Intent(this, ImportCalendar.class);
+
+        intent.putExtra("userParam",user);
+        startActivity(intent);
+    }
+
+    public void onClick_freetime(View view){
+        Intent intent= new Intent(this, SetFreeTime.class);
+
+        intent.putExtra("userParam",user);
+        startActivity(intent);
+    }
+
+    public void onClick_dailyAct(View view){
+        Intent intent= new Intent(this, RecurenteEvent.class);
+
+        intent.putExtra("userParam",user);
+        startActivity(intent);
+    }
+
+    public void onClick_notif(View view){
+        Intent intent= new Intent(this, NotifParam.class);
 
         intent.putExtra("userParam",user);
         startActivity(intent);
