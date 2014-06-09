@@ -17,12 +17,6 @@
             </intent-filter>
         </activity>
         <activity
-            android:name="fr.unice.polytech.freetime.app.FirstParam"
-            android:configChanges="orientation|keyboardHidden|screenSize"
-            android:label="@string/title_activity_first_param"
-            android:theme="@style/FullscreenTheme" >
-        </activity>
-        <activity
             android:name="fr.unice.polytech.freetime.app.FirstParam2"
             android:label="@string/title_activity_first_param2" >
         </activity>
