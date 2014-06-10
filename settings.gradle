@@ -1,1 +1,1 @@
-include ':app', ':CalendarModule', ':FreeTimeDatabaseModule'
+include ':CalendarModule', ':FreeTimeDatabaseModule', 'appkim'
