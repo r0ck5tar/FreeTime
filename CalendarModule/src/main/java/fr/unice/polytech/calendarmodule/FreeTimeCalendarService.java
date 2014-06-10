@@ -55,24 +55,6 @@ public class FreeTimeCalendarService extends Service {
 
         Cursor calCursor = getContentResolver().query(CalendarContract.Calendars.CONTENT_URI,
                 projection, null, null, Calendars.NAME + " ASC");
-        /*
-        if (calCursor.moveToFirst()) {
-            do {
-                // Get the field values
-                long calID = calCursor.getLong(PROJECTION_ID_INDEX);
-                String displayName = calCursor.getString(PROJECTION_DISPLAY_NAME_INDEX);
-                String accountName = calCursor.getString(PROJECTION_ACCOUNT_NAME_INDEX);
-                String ownerName = calCursor.getString(PROJECTION_OWNER_ACCOUNT_INDEX);
-
-
-                System.out.println(calID);
-                System.out.println(displayName);
-                System.out.println(accountName);
-                System.out.println(ownerName);
-
-            } while (calCursor.moveToNext());
-        }
-        */
 
         return calCursor;
     }
@@ -102,7 +84,6 @@ public class FreeTimeCalendarService extends Service {
         String[] projection = new String[]{Calendars._ID};
         String selection = Calendars.ACCOUNT_NAME + " = ? AND "
                 + Calendars.ACCOUNT_TYPE +  " = ? ";
-        // use the same values as above:
         String[] selArgs = new String[]{"freetime", CalendarContract.ACCOUNT_TYPE_LOCAL};
         Cursor cursor = getContentResolver().query(Calendars.CONTENT_URI,
                 projection, selection, selArgs, null);
@@ -119,11 +100,39 @@ public class FreeTimeCalendarService extends Service {
         }
     }
 
+    public Cursor getAllEventsFromCalendar(long calId) {
+        //String[] projection = new String[] {Events._ID, Events.TITLE, Events.DTSTART, Events.DTEND, Events.RRULE};
+        Cursor cursor = getContentResolver().query(Events.CONTENT_URI, null, Events.CALENDAR_ID + " = ? ", new String[]{Long.toString(calId)}, Events.DTSTART + " ASC");
+        return cursor;
+    }
+
+    public void importEventsFromCalendar(long calId){
+        Cursor ec = getAllEventsFromCalendar(calId);
+
+        if(ec.moveToFirst()) {
+            do{
+                String title = ec.getString(ec.getColumnIndex(Events.TITLE));
+                long start = ec.getLong(ec.getColumnIndex(Events.DTSTART));
+                long end = ec.getLong(ec.getColumnIndex(Events.DTEND));
+                String timeZone = ec.getString(ec.getColumnIndex(Events.EVENT_TIMEZONE));
+                String location = ec.getString(ec.getColumnIndex(Events.EVENT_LOCATION));
+                int allDay = ec.getInt(ec.getColumnIndex(Events.ALL_DAY));
+                String rRule = ec.getString(ec.getColumnIndex(Events.RRULE));
+                int availability = ec.getInt(ec.getColumnIndex(Events.AVAILABILITY));
+
+                new EventBuilder(freeTimeCalendarId).createEvent(title).startDT(start).endDT(end)
+                    .timeZone(timeZone).location(location).allDay(allDay==1).rRule(rRule)
+                    .availability(availability).finalizeEvent(getContentResolver());
+
+            }while(ec.moveToNext());
+        }
+    }
+
     public long createEvent(String title, int startYear, int startMonth, int startDay,
                             int endYear, int endMonth, int endDay) {
-        long calId = getFreeTimeCalendarId();
+        //long calId = getFreeTimeCalendarId();
 
-        EventBuilder eb = new EventBuilder(calId);
+        EventBuilder eb = new EventBuilder(freeTimeCalendarId);
         return eb.createEvent(title)
                 .startY(startYear).startM(startMonth).startD(startDay)
                 .endY(endYear).endM(endMonth).endD(endDay)
@@ -154,9 +163,5 @@ public class FreeTimeCalendarService extends Service {
                .availability(Events.AVAILABILITY_BUSY)
                .organizer("demo@freetime.com")
                .finalizeEvent(getContentResolver());
-
-        //ContentValues values = new ContentValues();
-        //values.put(Events.RRULE, "FREQ=DAILY;COUNT=20;BYDAY=MO,TU,WE,TH,FR;WKST=MO");
-        //values.put(Events.EVENT_LOCATION, "Münster");
     }
 }

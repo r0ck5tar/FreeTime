@@ -22,7 +22,6 @@ public class MainActivity extends ActionBarActivity {
     private DatePicker endDatePicker;
     private EditText eventTitle;
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -33,7 +32,6 @@ public class MainActivity extends ActionBarActivity {
         startDatePicker = (DatePicker) findViewById(R.id.startdatePicker);
         endDatePicker = (DatePicker) findViewById(R.id.endDatePicker);
     }
-
 
     @Override
     protected void onDestroy() {

@@ -14,50 +14,53 @@ import android.widget.ListView;
 import android.widget.SimpleCursorAdapter;
 import android.widget.Toast;
 
-import fr.unice.polytech.calendarmodule.FreeTimeCalendarService;
+import adapters.EventCursorAdapter;
 
 
-public class ImportCalendarActivity extends Activity {
-    private FreeTimeCalendarService ftcService;
-    private Cursor calCursor;
-    private ListView calendarList;
+public class FreeTimeCalendarViewActivity extends Activity {
+    private FreeTimeApplication app;
+    private Cursor eventCursor;
+    private ListView eventList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_import_calendar);
-        ftcService = ((FreeTimeApplication)getApplication()).getFtcService();
+        setContentView(R.layout.activity_free_time_calendar_view);
+        app = (FreeTimeApplication)getApplication();
 
-        calCursor = ftcService.getAllCalendars();
 
-        String[] columns = new String[] {CalendarContract.Calendars.NAME, CalendarContract.Calendars.ACCOUNT_NAME};
-        int[] to = new int[] {R.id.calendar_name, R.id.account_name};
-        final CursorAdapter adapter = new SimpleCursorAdapter(getApplicationContext(), R.layout.calendar_info, calCursor, columns, to, 0);
+        eventCursor = app.getFtcService().getAllEventsFromCalendar(getIntent().getLongExtra("calId", -1));
+        /*
+        String[] columns = new String[] {CalendarContract.Events._ID, CalendarContract.Events.TITLE, CalendarContract.Events.DTSTART, CalendarContract.Events.DTEND};
+        int[] to = new int[] {R.id.eventId, R.id.eventTitle, R.id.startDateTime, R.id.endDateTime};
+        final CursorAdapter adapter = new SimpleCursorAdapter(getApplicationContext(), R.layout.event_info, eventCursor, columns, to, 0);
+        */
 
-        calendarList = (ListView)findViewById(R.id.calendarListView);
-        calendarList.setAdapter(adapter);
-        calendarList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        EventCursorAdapter adapter = new EventCursorAdapter(getApplicationContext(), R.layout.event_info, eventCursor, true);
+
+        eventList = (ListView)findViewById(R.id.eventListView);
+        eventList.setAdapter(adapter);
+        eventList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
-                Cursor cursor = (Cursor) calendarList.getItemAtPosition(position);
+                Cursor cursor = (Cursor) eventList.getItemAtPosition(position);
 
                 String calendarName = cursor.getString(cursor.getColumnIndexOrThrow(CalendarContract.Calendars.NAME));
-
                 long id = cursor.getLong(cursor.getColumnIndexOrThrow(CalendarContract.Calendars._ID));
                 Intent intent = new Intent(getApplicationContext(), FreeTimeCalendarViewActivity.class);
                 intent.putExtra("calId", id);
-                ftcService.importEventsFromCalendar(id);
                 startActivity(intent);
                 Toast.makeText(getApplicationContext(), "Selected calendar " + calendarName + " id: " + id, Toast.LENGTH_LONG).show();
             }
         });
+
     }
 
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.import_calendar, menu);
+        getMenuInflater().inflate(R.menu.free_time_calendar_view, menu);
         return true;
     }
 

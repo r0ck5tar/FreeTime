@@ -51,6 +51,8 @@ public class EventBuilder {
         long start = calStart.getTimeInMillis(); values.put(Events.DTSTART, start);
         return this;
     }
+    public EventBuilder startDT(long startDT) { values.put(Events.DTSTART, startDT); return this;}
+
 
     public EventBuilder endY(int endYear) { calEnd.set(Calendar.YEAR, endYear); return this; }
     public EventBuilder endM(int endMonth) { calEnd.set(Calendar.MONTH, endMonth); return this; }
@@ -62,6 +64,7 @@ public class EventBuilder {
         long end = calEnd.getTimeInMillis(); values.put(Events.DTEND, end);
         return this;
     }
+    public EventBuilder endDT(long endDT) { values.put(Events.DTEND, endDT); return this;}
 
     public EventBuilder location(String location) { values.put(Events.EVENT_LOCATION, location); return this;}
     public EventBuilder calendarID(long calID) { values.put(Events.CALENDAR_ID, calID); return this;}
@@ -71,6 +74,8 @@ public class EventBuilder {
     public EventBuilder allDay(boolean allDay) { values.put(Events.ALL_DAY, allDay? 1:0); return this;}
     public EventBuilder organizer(String organizer) { values.put(Events.ORGANIZER, organizer); return this; }
     public EventBuilder availability(int availability ) { values.put(Events.AVAILABILITY, availability); return this;}
+
+    public EventBuilder rRule(String rRule) { values.put(Events.RRULE, rRule); return this; }
 
     public long finalizeEvent(ContentResolver contentResolver) {
         Uri uri = contentResolver.insert(Events.CONTENT_URI, values);
