@@ -25,6 +25,10 @@
             android:name=".FreeTimeCalendarViewActivity"
             android:label="@string/title_activity_free_time_calendar_view" >
         </activity>
+        <activity
+            android:name=".DatabaseTestActivity"
+            android:label="@string/title_activity_database_test" >
+        </activity>
     </application>
 
     <uses-sdk android:minSdkVersion="14" />

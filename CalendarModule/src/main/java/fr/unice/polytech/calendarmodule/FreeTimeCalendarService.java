@@ -18,6 +18,9 @@ import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.TimeZone;
 
+import fr.unice.polytech.freetimedatabase.FreeTimeDbContract;
+import fr.unice.polytech.freetimedatabase.FreeTimeDbHelper;
+
 /**
  * Created by Hakim on 5/6/2014.
  */
@@ -165,5 +168,32 @@ public class FreeTimeCalendarService extends Service {
                .availability(Events.AVAILABILITY_BUSY)
                .organizer("demo@freetime.com")
                .finalizeEvent(getContentResolver());
+    }
+
+    public void findUnoccupiedTimeSlots(long begin, long end) {
+        String[] projection = new String[] {
+                Instances._ID, Instances.BEGIN, Instances.END, Instances.EVENT_ID
+        };
+
+        Cursor cursor = Instances.query(getContentResolver(), projection, begin, end);
+
+        if(cursor.getCount() > 0 ) {
+
+            cursor.moveToFirst();
+
+            if (!cursor.isAfterLast()) {
+                System.out.println("Event found: " + cursor.getLong(0));
+
+                ContentValues values = new ContentValues();
+                values.put(FreeTimeDbContract.UnoccupiedTime.COLUMN_END_TIME, cursor.getLong(cursor.getColumnIndex(Instances.END)));
+                values.put(FreeTimeDbContract.UnoccupiedTime.COLUMN_START_TIME, cursor.getLong(cursor.getColumnIndex(Instances.BEGIN)));
+
+
+                FreeTimeDbHelper freeTimeDbHelper = new FreeTimeDbHelper(getApplicationContext());
+                freeTimeDbHelper.getWritableDatabase()
+                        .insert(FreeTimeDbContract.UnoccupiedTime.TABLE_NAME, null, values);
+
+            }
+        }
     }
 }

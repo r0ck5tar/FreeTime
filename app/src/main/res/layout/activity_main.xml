@@ -20,7 +20,7 @@
     <DatePicker
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/startdatePicker"
+        android:id="@+id/main.startdatePicker"
         android:spinnersShown="true"
         android:calendarViewShown="false"
         android:layout_below="@+id/eventTitle"
@@ -34,7 +34,7 @@
         android:text="Start"
         android:id="@+id/textView2"
         android:layout_marginBottom="48dp"
-        android:layout_alignBottom="@+id/startdatePicker"
+        android:layout_alignBottom="@+id/main.startdatePicker"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true" />
 
@@ -44,7 +44,7 @@
         android:textAppearance="?android:attr/textAppearanceMedium"
         android:text="End"
         android:id="@+id/calendar_name"
-        android:layout_alignTop="@+id/endDatePicker"
+        android:layout_alignTop="@+id/main.endDatePicker"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
         android:layout_marginTop="48dp" />
@@ -52,11 +52,11 @@
     <DatePicker
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/endDatePicker"
+        android:id="@+id/main.endDatePicker"
         android:calendarViewShown="false"
         android:focusable="false"
         android:spinnersShown="true"
-        android:layout_below="@+id/startdatePicker"
+        android:layout_below="@+id/main.startdatePicker"
         android:layout_alignParentRight="true"
         android:layout_alignParentEnd="true" />
 
@@ -66,7 +66,7 @@
         android:textAppearance="?android:attr/textAppearanceMedium"
         android:text="Create Event"
         android:id="@+id/textView3"
-        android:layout_above="@+id/startdatePicker"
+        android:layout_above="@+id/main.startdatePicker"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"/>
 
@@ -87,5 +87,15 @@
         android:text="@string/import_calendar_button"
         android:id="@+id/import_calendar_button"
         android:onClick="onImportCalendarButton"/>
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="TestCreateDatabase"
+        android:id="@+id/testCreateDatabaseButton"
+        android:onClick="onTestCreateDatabaseButtonClick"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true" />
 
 </RelativeLayout>

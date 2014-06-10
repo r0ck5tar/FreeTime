@@ -1,21 +1,13 @@
 package fr.unice.polytech.freetime.app;
 
 
-import android.content.ComponentName;
-import android.content.Context;
 import android.content.Intent;
-import android.content.ServiceConnection;
 import android.os.Bundle;
-import android.os.IBinder;
 import android.support.v7.app.ActionBarActivity;
 import android.view.Menu;
 import android.view.View;
-import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
-import android.widget.Toast;
-
-import fr.unice.polytech.calendarmodule.FreeTimeCalendarService;
 
 public class MainActivity extends ActionBarActivity {
     private FreeTimeApplication app;
@@ -30,8 +22,8 @@ public class MainActivity extends ActionBarActivity {
         app = (FreeTimeApplication)getApplication();
 
         eventTitle = (EditText) findViewById(R.id.eventTitle);
-        startDatePicker = (DatePicker) findViewById(R.id.startdatePicker);
-        endDatePicker = (DatePicker) findViewById(R.id.endDatePicker);
+        startDatePicker = (DatePicker) findViewById(R.id.main_startdatePicker);
+        endDatePicker = (DatePicker) findViewById(R.id.main_endDatePicker);
     }
 
     @Override
@@ -66,6 +58,11 @@ public class MainActivity extends ActionBarActivity {
 
     public void onImportCalendarButton(View view){
         Intent intent = new Intent(getApplicationContext(), ImportCalendarActivity.class);
+        startActivity(intent);
+    }
+
+    public void onTestCreateDatabaseButtonClick(View view){
+        Intent intent = new Intent(getApplicationContext(), DatabaseTestActivity.class);
         startActivity(intent);
     }
 }
