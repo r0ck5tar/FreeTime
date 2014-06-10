@@ -9,6 +9,8 @@
 *.class
 
 # generated files
+*.bin
+*.lock
 bin/
 gen/
 out/
@@ -18,6 +20,7 @@ build/
 local.properties
 
 .project
+.gradle/*
 .classpath
 .settings
 target/
@@ -36,4 +39,4 @@ project.properties
 # MAC
 *.DS_Store
 
-.gradle/
+*build/

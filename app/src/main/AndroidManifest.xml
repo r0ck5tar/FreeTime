@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="fr.unice.polytech.freetime.app" >
+
+    <application
+        android:allowBackup="true"
+        android:icon="@drawable/ic_launcher"
+        android:label="@string/app_name"
+        android:theme="@style/AppTheme" >
+        <activity
+            android:name="fr.unice.polytech.freetime.app.Bienvenue2"
+            android:label="@string/app_name" >
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name="fr.unice.polytech.freetime.app.FirstParam2"
+            android:label="@string/title_activity_first_param2" >
+        </activity>
+        <activity
+            android:name="fr.unice.polytech.freetime.app.ImportCalendar"
+            android:label="@string/title_activity_import_calendar" >
+        </activity>
+        <activity
+            android:name=".SetFreeTime"
+            android:label="@string/title_activity_set_free_time" >
+        </activity>
+        <activity
+            android:name="fr.unice.polytech.freetime.app.RecurenteEvent"
+            android:label="@string/title_activity_recurente_event" >
+        </activity>
+        <activity
+            android:name=".NotifParam"
+            android:label="@string/title_activity_notif_param" >
+        </activity>
+    </application>
+
+</manifest>

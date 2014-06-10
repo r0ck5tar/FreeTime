@@ -6,13 +6,18 @@
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
     android:paddingBottom="@dimen/activity_vertical_margin"
-    tools:context="fr.unice.polytech.freetime.app.FreeTimeCalendarViewActivity">
+    tools:context="fr.unice.polytech.freetime.app.ImportCalendar">
 
-    <ListView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/eventListView"
-        android:layout_centerVertical="true"
-        android:layout_centerHorizontal="true"
-        android:longClickable="false" />
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Import"
+            android:onClick="onClick_okValid"/>
+
+        </LinearLayout>
+
 </RelativeLayout>

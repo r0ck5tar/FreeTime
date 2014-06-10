@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">FreeTime</string>
+    <string name="hello_world">Hello world!</string>
+    <string name="action_settings">Settings</string>
+    <string name="title_activity_bienvenue">Bienvenue</string>
+    <string name="dummy_button">Dummy Button</string>
+    <string name="dummy_content">DUMMY\nCONTENT</string>
+    <string name="title_activity_first_param">FirstParam</string>
+    <string name="title_activity_bienvenue2">Bienvenue2</string>
+    <string name="title_activity_first_param2">FirstParam2</string>
+    <string name="title_activity_import_calendar">ImportCalendar</string>
+    <string name="title_activity_set_free_time">setFreeTime</string>
+    <string name="title_activity_recurente_event">RecurenteEvent</string>
+    <string name="title_activity_notif_param">notifParam</string>
+
+</resources>
