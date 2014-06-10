@@ -37,3 +37,5 @@ project.properties
 
 # MAC
 *.DS_Store
+
+*build/
