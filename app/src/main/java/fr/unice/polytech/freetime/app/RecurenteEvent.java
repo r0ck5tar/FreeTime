@@ -21,6 +21,7 @@ public class RecurenteEvent extends ActionBarActivity {
     private ArrayList<String> tabDay= new ArrayList<String>();
     private TimePicker start;
     private TimePicker end;
+    private MultipleChoiseSpinner spinner;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -28,7 +29,11 @@ public class RecurenteEvent extends ActionBarActivity {
         setContentView(R.layout.activity_recurente_event);
         user = (User) getIntent().getSerializableExtra("userParam");
 
-        tabDay.add("MONDAY");
+        String[] array = { "MONDAY", "TUESDAY", "WEDNESDAY","THURSDAY","FRIDAY" };
+        spinner = (MultipleChoiseSpinner) findViewById(R.id.mySpinner1);
+        spinner.setItems(array);
+
+     /*   tabDay.add("MONDAY");
         tabDay.add("TUESDAY");
         tabDay.add("WEDNESDAY");
         tabDay.add("THURSDAY");
@@ -42,7 +47,7 @@ public class RecurenteEvent extends ActionBarActivity {
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         // Apply the adapter to the spinner
         spinner.setAdapter(adapter);
-
+*/
         start= (TimePicker) findViewById(R.id.timePicker_start);
         end= (TimePicker) findViewById(R.id.timePicker_end);
         start.setIs24HourView(true);
