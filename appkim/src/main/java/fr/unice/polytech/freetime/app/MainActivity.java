@@ -21,7 +21,7 @@ public class MainActivity extends ActionBarActivity {
         setContentView(R.layout.activity_main);
         app = (FreeTimeApplication)getApplication();
 
-        eventTitle = (EditText) findViewById(R.id.eventTitle);
+        eventTitle = (EditText) findViewById(R.id.main_eventTitle);
         startDatePicker = (DatePicker) findViewById(R.id.main_startdatePicker);
         endDatePicker = (DatePicker) findViewById(R.id.main_endDatePicker);
     }

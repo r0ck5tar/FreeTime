@@ -37,3 +37,4 @@ project.properties
 *.DS_Store
 
 .gradle/
+atlassian-ide-plugin.xml
