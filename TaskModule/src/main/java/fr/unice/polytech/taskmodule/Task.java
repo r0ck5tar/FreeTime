@@ -34,6 +34,7 @@ public class Task {
     private int hourEstimation;
     private int priority;
     private ArrayList<Long> eventsId;
+    private ArrayList<FtEvent> events;
 
     public Task(){
         this.taskStart = new GregorianCalendar();

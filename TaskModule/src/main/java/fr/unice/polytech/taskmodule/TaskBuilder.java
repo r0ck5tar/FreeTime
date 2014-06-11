@@ -12,35 +12,37 @@ public class TaskBuilder {
 
     public TaskBuilder(){
         this.task = new Task();
+
     }
 
-    public void taskStartDate(Calendar start) throws WrongStartTaskException {
-        task.setTaskStart(start);
+    public TaskBuilder taskStartDate(Calendar start) throws WrongStartTaskException {
+        task.setTaskStart(start); return this;
     }
 
-    public void taskEndDate(Calendar end) throws WrongEndTaskException {
-        task.setTaskEnd(end);
+    public TaskBuilder taskEndDate(Calendar end) throws WrongEndTaskException {
+        task.setTaskEnd(end);return this;
     }
 
-    public void isAllDay(boolean isAllDayBool){
-        task.setAllDay(isAllDayBool);
+    public TaskBuilder isAllDay(boolean isAllDayBool){
+        task.setAllDay(isAllDayBool);return this;
     }
 
-    public void priority(int priority){
-        task.setPriority(priority);
+    public TaskBuilder priority(int priority){
+        task.setPriority(priority);return this;
     }
 
-    public void hourEstimation(int hour){
-        task.setHourEstimation(hour);
+    public TaskBuilder hourEstimation(int hour){
+        task.setHourEstimation(hour);return this;
     }
 
-    public void taskType(String type){
+    public TaskBuilder taskType(String type){
         Task.TASK_TYPE typeEnum = task.stringToEnum(type);
         task.setType(typeEnum);
+        return this;
     }
 
-    public void description(String description){
-        task.setDescription(description);
+    public TaskBuilder description(String description){
+        task.setDescription(description);return this;
     }
 
     //you have to call this methode after setting all the parameters;
