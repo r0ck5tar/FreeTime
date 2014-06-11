@@ -17,16 +17,6 @@
         android:layout_alignLeft="@+id/createEventButton"
         android:layout_alignStart="@+id/createEventButton" />
 
-    <DatePicker
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/main.startdatePicker"
-        android:spinnersShown="true"
-        android:calendarViewShown="false"
-        android:layout_below="@+id/eventinfo.eventTitle"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true" />
-
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -97,5 +87,15 @@
         android:layout_alignParentBottom="true"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true" />
+
+    <DatePicker
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/main.startdatePicker"
+        android:spinnersShown="true"
+        android:calendarViewShown="false"
+        android:layout_below="@+id/main.eventTitle"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true" />
 
 </RelativeLayout>

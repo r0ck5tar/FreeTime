@@ -5,6 +5,7 @@ import android.app.Service;
 import android.content.ContentValues;
 import android.content.Intent;
 import android.database.Cursor;
+import android.database.sqlite.SQLiteQueryBuilder;
 import android.net.Uri;
 import android.os.Binder;
 import android.os.Build;
@@ -34,12 +35,6 @@ public class FreeTimeCalendarService extends Service {
 
     private final IBinder binder = new FreeTimeBinder();
 
-    // The indices for the projection array above.
-    private static final int PROJECTION_ID_INDEX = 0;
-    private static final int PROJECTION_ACCOUNT_NAME_INDEX = 1;
-    private static final int PROJECTION_DISPLAY_NAME_INDEX = 2;
-    private static final int PROJECTION_OWNER_ACCOUNT_INDEX = 3;
-
     private long freeTimeCalendarId;
 
     @Override
@@ -64,7 +59,7 @@ public class FreeTimeCalendarService extends Service {
         return calCursor;
     }
 
-    public Uri createCalendar(){
+    private Uri createCalendar(){
         ContentValues values = new ContentValues();
         values.put(Calendars.ACCOUNT_NAME, "freetime");
         values.put(Calendars.ACCOUNT_TYPE, CalendarContract.ACCOUNT_TYPE_LOCAL);
@@ -107,8 +102,8 @@ public class FreeTimeCalendarService extends Service {
     }
 
     public Cursor getAllEventsFromCalendar(long calId) {
-        //String[] projection = new String[] {Events._ID, Events.TITLE, Events.DTSTART, Events.DTEND, Events.RRULE};
-        Cursor cursor = getContentResolver().query(Events.CONTENT_URI, null, Events.CALENDAR_ID + " = ? ", new String[]{Long.toString(calId)}, Events.DTSTART + " ASC");
+        Cursor cursor = getContentResolver().query(Events.CONTENT_URI, null, Events.CALENDAR_ID + " = ? ",
+                                             new String[]{Long.toString(calId)}, Events.DTSTART + " ASC");
         return cursor;
     }
 
@@ -134,6 +129,17 @@ public class FreeTimeCalendarService extends Service {
         }
     }
 
+    public long createEvent(String title, Calendar startCal, Calendar endCal) {
+        int startYear = startCal.get(Calendar.YEAR);
+        int startMonth = startCal.get(Calendar.MONTH);
+        int startDay = startCal.get(Calendar.DAY_OF_MONTH);
+        int endYear = endCal.get(Calendar.YEAR);
+        int endMonth = endCal.get(Calendar.MONTH);
+        int endDay = endCal.get(Calendar.DAY_OF_MONTH);
+
+        return createEvent(title, startYear, startMonth, startDay, endYear, endMonth, endDay);
+    }
+
     public long createEvent(String title, int startYear, int startMonth, int startDay,
                             int endYear, int endMonth, int endDay) {
         //long calId = getFreeTimeCalendarId();
@@ -151,18 +157,18 @@ public class FreeTimeCalendarService extends Service {
     }
 
     public long createEvent(String title, int startYear, int startMonth, int startDay,
-                            int startHour, int startMinute, int startSecond,
+                            int startHour, int startMinute,
                             int endYear, int endMonth, int endDay,
-                            int endHour, int endMinute, int endSecond) {
+                            int endHour, int endMinute) {
 
         long calId = getFreeTimeCalendarId();
 
         EventBuilder eb = new EventBuilder(calId);
         return eb.createEvent(title)
                .startY(startYear).startM(startMonth).startD(startDay)
-               .startH(startHour).startMin(startMinute).startS(startSecond)
+               .startH(startHour).startMin(startMinute).startS(0)
                .endY(endYear).endM(endMonth).endD(endDay)
-               .endH(endHour).endMin(endMinute).endS(endSecond)
+               .endH(endHour).endMin(endMinute).endS(0)
                .timeZone(TimeZone.getDefault().getID())
                .finalizeStartTime().finalizeEndTime()
                .allDay(false).description("description goes here")
@@ -176,7 +182,9 @@ public class FreeTimeCalendarService extends Service {
                 Instances._ID, Instances.BEGIN, Instances.END, Instances.EVENT_ID
         };
         //TODO perhaps the search query string should be passed as well, so we can order the query results in ascending order of Instances.BEGIN
-        Cursor cursor = Instances.query(getContentResolver(), projection, beginRange, endRange);
+        SQLiteQueryBuilder queryBuilder = new SQLiteQueryBuilder();
+        String queryString = queryBuilder.buildQuery(projection, null, null, null, Instances.BEGIN + " ASC", null);
+        Cursor cursor = Instances.query(getContentResolver(), projection, beginRange, endRange, queryString);
         ContentValues values = new ContentValues();
 
         final int BEGIN = cursor.getColumnIndex(Instances.BEGIN);
@@ -204,11 +212,15 @@ public class FreeTimeCalendarService extends Service {
                 //add the BEGIN time of the found instance as the endtime of the empty slot
                 values.put(FreeTimeDbContract.UnoccupiedTime.COLUMN_END_TIME, cursor.getLong(BEGIN));
 
-                //TODO test if cursor.moveToNext(), then iterate through the next Instances, and detect the starttime and endtime of Empty slots
+                findUnoccupiedTimeSlots(cursor.getLong(END), endRange);
             }
             else {
-                //if there is an event instance that starts at time=beginRange, the startTime of the first empty slot in the given range
-                //is equal to the END time of the instance
+                findUnoccupiedTimeSlots(cursor.getLong(END), endRange);
+
+                //region overly-complicated else case
+                /* if there is an event instance that starts at time=beginRange, the startTime of the first empty slot in the given range
+                   is equal to the END time of the instance */
+                /*
                 values.put(FreeTimeDbContract.UnoccupiedTime.COLUMN_START_TIME, cursor.getLong(END));
                 if (cursor.isLast()) {
                     values.put(FreeTimeDbContract.UnoccupiedTime.COLUMN_END_TIME, endRange);
@@ -217,12 +229,10 @@ public class FreeTimeCalendarService extends Service {
 
                 else {
                     cursor.moveToNext();
-                    values.put(FreeTimeDbContract.UnoccupiedTime.COLUMN_START_TIME, cursor.getLong(BEGIN));
-
-                    //TODO test if cursor.moveToNext(), then iterate through the next Instances, and detect the starttime and endtime of Empty slots
+                    values.put(FreeTimeDbContract.UnoccupiedTime.COLUMN_END_TIME, cursor.getLong(BEGIN));
                 }
-
-
+                */
+                //endregion
             }
         }
 
