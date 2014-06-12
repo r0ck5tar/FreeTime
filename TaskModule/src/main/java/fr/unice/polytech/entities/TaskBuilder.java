@@ -1,8 +1,10 @@
-package fr.unice.polytech.taskmodule;
+package fr.unice.polytech.entities;
 
 import android.content.ContentResolver;
 
 import java.util.Calendar;
+
+import fr.unice.polytech.optimiser.ConvertTaskToEvent;
 
 /**
  * Created by Clement on 10/06/2014.
@@ -12,7 +14,6 @@ public class TaskBuilder {
 
     public TaskBuilder(){
         this.task = new Task();
-
     }
 
     public TaskBuilder taskStartDate(Calendar start) throws WrongStartTaskException {
@@ -46,8 +47,10 @@ public class TaskBuilder {
     }
 
     //you have to call this methode after setting all the parameters;
+    //no need of the calendarId
     public void createTask(Long calendarId, ContentResolver contentResolver){
-        task.publish(calendarId,contentResolver);
+        ConvertTaskToEvent.publish(calendarId, contentResolver, task);
+        //todo store the task in the DB !
     }
 
 }

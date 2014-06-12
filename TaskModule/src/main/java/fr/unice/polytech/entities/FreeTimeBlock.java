@@ -1,4 +1,4 @@
-package fr.unice.polytech.taskmodule;
+package fr.unice.polytech.entities;
 
 import android.content.ContentResolver;
 import java.util.Calendar;
@@ -21,6 +21,7 @@ public class FreeTimeBlock {
         //call the recurrenceBuilder.
         //the recurrence rule will be everyweek on the same day;
 
+        //todo call the reccurence builder
 
 
     }

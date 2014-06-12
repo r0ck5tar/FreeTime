@@ -1,4 +1,4 @@
-package fr.unice.polytech.taskmodule;
+package fr.unice.polytech.entities;
 
 import android.content.ContentResolver;
 import android.provider.CalendarContract;
@@ -23,7 +23,12 @@ public class Task {
 
     //Represent 3 type of task
     public enum TASK_TYPE {EVENT,TASK,FIXED};
-    public static final int HIGH_PRIORITY = 1;
+    public static final int HIGH_PRIORITY = 3;
+    public static final int MIDDLE_PRIORITY = 2;
+    public static final int LOW_PRIORITY = 1;
+
+
+
 
     private TASK_TYPE type;
     private String title;
@@ -56,6 +61,7 @@ public class Task {
         }
     }
 
+    //region old code
    /* public Task(TASK_TYPE type,String title){
         this.type = type;
         this.title = title;
@@ -63,7 +69,7 @@ public class Task {
         this.taskStart = new GregorianCalendar();
         this.taskEnd = new GregorianCalendar();
         this.allDay = false;
-    } */
+    }
 
     public long publish(long calendarId,ContentResolver contentResolver){
         EventBuilder result = new EventBuilder(calendarId);
@@ -82,6 +88,9 @@ public class Task {
         result.organizer("moonatique@freetime.com");
         return result.finalizeEvent(contentResolver);
     }
+
+    */
+    //endregion
 
 
     public TASK_TYPE getType() {

@@ -1,4 +1,4 @@
-package fr.unice.polytech.taskmodule;
+package fr.unice.polytech.entities;
 
 import java.util.Calendar;
 
