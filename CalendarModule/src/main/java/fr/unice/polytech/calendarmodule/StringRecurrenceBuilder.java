@@ -80,24 +80,21 @@ public class StringRecurrenceBuilder {
     public void setRruleArgs(HashMap<String, String> rruleArgs) {
         this.rruleArgs = rruleArgs;
     }
-/**
+    /**
      * PRIVATE METHOD
      */
 
 //Transform GregorianCalendar to string for rrule
-public static String gcanlendarToString(GregorianCalendar g){
-    String m = MONTH[g.get(Calendar.MONTH)];
-    String d = (g.get(Calendar.DAY_OF_MONTH)<10)? "0"+g.get(Calendar.DAY_OF_MONTH):g.get(Calendar.DAY_OF_MONTH)+"";
-    String result = g.get(Calendar.YEAR)+m+d+"T";
-    if(g.get(Calendar.HOUR) == 0 && g.get(Calendar.MINUTE)==0 && g.get(Calendar.SECOND)==0){
-        return result;
-    }else{
+    public static String gcanlendarToString(GregorianCalendar g){
+        String m = MONTH[g.get(Calendar.MONTH)];
+        String d = (g.get(Calendar.DAY_OF_MONTH)<10)? "0"+g.get(Calendar.DAY_OF_MONTH):g.get(Calendar.DAY_OF_MONTH)+"";
+        String result = g.get(Calendar.YEAR)+m+d+"T";
         String h = (g.get(Calendar.HOUR)<10)?"0"+g.get(Calendar.HOUR):g.get(Calendar.HOUR)+"";
         String mi = (g.get(Calendar.MINUTE)<10)?"0"+g.get(Calendar.MINUTE):g.get(Calendar.MINUTE)+"";
         String s = (g.get(Calendar.SECOND)<10)?"0"+g.get(Calendar.SECOND):g.get(Calendar.SECOND)+"";
-        return result+h+mi+s;
+        return g.get(Calendar.YEAR)+m+d+"T"+h+mi+s;
+
     }
-}
     /**
      * CONSTRUTOR
      */
@@ -125,7 +122,7 @@ public static String gcanlendarToString(GregorianCalendar g){
     }
 
     public StringRecurrenceBuilder until(GregorianCalendar dtEnd){
-        rruleArgs.put(UNTIL,gcanlendarToString(dtEnd));return this;
+        rruleArgs.put(UNTIL,gcanlendarToString(dtEnd)+"Z");return this;
     }
     public StringRecurrenceBuilder repetition(int repetition){
         rruleArgs.put(COUNT,repetition+"");return this;
@@ -194,5 +191,4 @@ public static String gcanlendarToString(GregorianCalendar g){
         }
         return result;
     }
-
 }
