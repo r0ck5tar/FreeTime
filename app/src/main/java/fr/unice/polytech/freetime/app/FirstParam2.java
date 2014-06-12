@@ -202,7 +202,7 @@ public class FirstParam2 extends ActionBarActivity {
     }
 
     public void onClick_dailyAct(View view){
-        Intent intent= new Intent(this, RecurenteEvent.class);
+        Intent intent= new Intent(this, RecurrentEventList.class);
 
         intent.putExtra("userParam",user);
         startActivity(intent);

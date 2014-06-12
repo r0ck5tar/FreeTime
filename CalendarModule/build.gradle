@@ -1,12 +1,16 @@
 buildscript {
     repositories {
-        mavenLocal()
         mavenCentral()
+        mavenLocal()
+        maven { url 'https://oss.sonatype.org/content/repositories/snapshots' }
+        //required to get the plugin working again with gradle:0.11+ and AS0.6.0
+        maven { url 'https://github.com/rockerhieu/mvn-repo/raw/master/' }
     }
-
     dependencies {
-        classpath 'com.android.tools.build:gradle:0.10.+'
-        classpath 'org.robolectric.gradle:gradle-android-test-plugin:0.10.+'
+        classpath 'com.android.tools.build:gradle:0.11.+'
+        //classpath 'org.robolectric.gradle:gradle-android-test-plugin:0.10.+'
+        //required to get the plugin working again on AS 0.6.0
+        classpath 'org.robolectric.gradle:gradle-android-test-plugin:0.10.1-SNAPSHOT'
     }
 }
 
@@ -15,6 +19,8 @@ allprojects {
         mavenCentral()
     }
 }
+
+
 apply plugin: 'android-library'
 apply plugin: 'android-test'
 
@@ -39,12 +45,17 @@ android {
     }
     productFlavors {
     }
+
+    sourceSets { main { java.srcDirs = ['src/main/java', 'src/test/java/'] } }
+    /*
     sourceSets {
         androidTest {
             java.srcDirs = ['src/test']
         }
     }
+    */
 }
+
 androidTest {
     include '**/*Test.class'
     exclude '**/espresso/**/*.class'
@@ -59,3 +70,5 @@ dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
     compile project(':FreeTimeDatabaseModule')
 }
+
+

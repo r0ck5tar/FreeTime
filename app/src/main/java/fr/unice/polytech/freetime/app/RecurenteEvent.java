@@ -6,13 +6,22 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.DatePicker;
+import android.widget.Spinner;
+import android.widget.TimePicker;
+
+import java.util.ArrayList;
 
 
 public class RecurenteEvent extends ActionBarActivity {
 
     private User user;
-    //private DatePicker
+    private ArrayList<String> tabDay= new ArrayList<String>();
+    private TimePicker start;
+    private TimePicker end;
+    private MultipleChoiseSpinner spinner;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -20,6 +29,29 @@ public class RecurenteEvent extends ActionBarActivity {
         setContentView(R.layout.activity_recurente_event);
         user = (User) getIntent().getSerializableExtra("userParam");
 
+        String[] array = { "MONDAY", "TUESDAY", "WEDNESDAY","THURSDAY","FRIDAY" };
+        spinner = (MultipleChoiseSpinner) findViewById(R.id.mySpinner1);
+        spinner.setItems(array);
+
+     /*   tabDay.add("MONDAY");
+        tabDay.add("TUESDAY");
+        tabDay.add("WEDNESDAY");
+        tabDay.add("THURSDAY");
+        tabDay.add("FRIDAY");
+        Spinner spinner = (Spinner) findViewById(R.id.spinner_day);
+        // spinner.ad
+
+        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,R.layout.support_simple_spinner_dropdown_item,tabDay);
+
+        // Specify the layout to use when the list of choices appears
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        // Apply the adapter to the spinner
+        spinner.setAdapter(adapter);
+*/
+        start= (TimePicker) findViewById(R.id.timePicker_start);
+        end= (TimePicker) findViewById(R.id.timePicker_end);
+        start.setIs24HourView(true);
+        end.setIs24HourView(true);
 
     }
 
@@ -45,11 +77,9 @@ public class RecurenteEvent extends ActionBarActivity {
     }
 
     public void onClick_okValid(View view){
-        user.setSetDailiesAct(true);
-        int step=user.getStep();
-        user.setStep(++step);
-        Intent intent= new Intent(this, FirstParam2.class);
-        intent.putExtra("user",user);
+
+        Intent intent= new Intent(this, RecurrentEventList.class);
+        intent.putExtra("userParam",user);
         startActivity(intent);
 
     }

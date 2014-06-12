@@ -9,7 +9,7 @@
         android:textAppearance="?android:attr/textAppearanceSmall"
         android:text="Small Text"
         android:id="@+id/eventId"
-        android:layout_alignBottom="@+id/eventTitle"
+        android:layout_alignBottom="@+id/eventinfo.eventTitle"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true" />
 
@@ -18,7 +18,7 @@
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceMedium"
         android:text="Medium Text"
-        android:id="@+id/eventTitle"
+        android:id="@+id/eventinfo.eventTitle"
         android:textColor="@android:color/primary_text_light"
         android:layout_alignParentTop="true"
         android:layout_toRightOf="@+id/eventId"

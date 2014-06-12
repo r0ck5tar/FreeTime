@@ -3,6 +3,7 @@ package fr.unice.polytech.freetime.app;
 import android.provider.CalendarContract;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -28,6 +29,12 @@ public class User implements Serializable{
         setFreeTime=false;
         setDailiesAct=false;
         setNotif=false;
+        notificationParam=false;
+        freeTime= new ArrayList<event>();
+        cal = null;
+        name="defaultName";
+        events= new ArrayList<event>();
+
     }
 
     public String getName() {
