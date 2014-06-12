@@ -29,8 +29,7 @@
             android:id="@+id/listview_event"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:onClick="onClick_select_item_event">
+            android:layout_weight="1">
             </ListView>
 
         <Button
@@ -58,7 +57,7 @@
             android:layout_weight="3"
             android:background="#48a48d"
             android:text="Finish"
-            android:onCLick="onClick_finish"/>
+            android:onClick="onClick_finish"/>
 
         </LinearLayout>
 

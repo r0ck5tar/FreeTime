@@ -77,11 +77,9 @@ public class RecurenteEvent extends ActionBarActivity {
     }
 
     public void onClick_okValid(View view){
-        user.setSetDailiesAct(true);
-        int step=user.getStep();
-        user.setStep(++step);
-        Intent intent= new Intent(this, FirstParam2.class);
-        intent.putExtra("user",user);
+
+        Intent intent= new Intent(this, RecurrentEventList.class);
+        intent.putExtra("userParam",user);
         startActivity(intent);
 
     }

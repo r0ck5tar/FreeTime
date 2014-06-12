@@ -1,11 +1,12 @@
 package fr.unice.polytech.freetime.app;
 
+import java.io.Serializable;
 import java.util.GregorianCalendar;
 
 /**
  * Created by user on 09/06/2014.
  */
-public class event {
+public class event implements Serializable{
 
     private String title;
     private int startTime;
@@ -15,6 +16,7 @@ public class event {
     private GregorianCalendar dateEnd;
 
     public event(String title,int startDay,int endDay,String[] day,GregorianCalendar start,GregorianCalendar end){
+        super();
         this.day=day;
         this.endTime=endDay;
         this.startTime=startDay;
