@@ -14,5 +14,6 @@
     <string name="title_activity_set_free_time">setFreeTime</string>
     <string name="title_activity_recurente_event">RecurenteEvent</string>
     <string name="title_activity_notif_param">notifParam</string>
+    <string name="title_activity_recurrent_event_list">RecurrentEventList</string>
 
 </resources>
