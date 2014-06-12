@@ -1,2 +1,2 @@
-include 'app', 'appyoann', 'appkim', 'appclem', ':TaskModule', ':CalendarModule', ':FreeTimeDatabaseModule'
+include 'app', 'appyoann', 'appkim', 'appclem', ':CalendarModule', ':FreeTimeDatabaseModule', 'TaskOptimisationModule'
 

@@ -27,5 +27,5 @@ android {
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
     compile project(':CalendarModule')
-    compile project(':TaskModule')
+    compile project(':TaskOptimisationModule')
 }
