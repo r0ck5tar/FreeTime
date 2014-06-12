@@ -2,9 +2,11 @@ package fr.unice.polytech.calendarmodule;
 
 import android.annotation.TargetApi;
 import android.app.Service;
+import android.content.ContentUris;
 import android.content.ContentValues;
 import android.content.Intent;
 import android.database.Cursor;
+import android.database.sqlite.SQLiteOpenHelper;
 import android.database.sqlite.SQLiteQueryBuilder;
 import android.net.Uri;
 import android.os.Binder;
@@ -177,21 +179,37 @@ public class FreeTimeCalendarService extends Service {
                .finalizeEvent(getContentResolver());
     }
 
-    public void findUnoccupiedTimeSlots(long beginRange, long endRange) {
+    public void findUnoccupiedTimeSlots(long beginRange, long endRange, FreeTimeDbHelper db) {
         String[] projection = new String[] {
                 Instances._ID, Instances.BEGIN, Instances.END, Instances.EVENT_ID
         };
         //TODO perhaps the search query string should be passed as well, so we can order the query results in ascending order of Instances.BEGIN
         SQLiteQueryBuilder queryBuilder = new SQLiteQueryBuilder();
+        //queryBuilder.setTables(CalendarContract.Instances.);
         String queryString = queryBuilder.buildQuery(projection, null, null, null, Instances.BEGIN + " ASC", null);
-        Cursor cursor = Instances.query(getContentResolver(), projection, beginRange, endRange, queryString);
+
+        Uri.Builder builder = CalendarContract.Instances.CONTENT_BY_DAY_URI.buildUpon();
+        ContentUris.appendId(builder, beginRange);
+        ContentUris.appendId(builder, endRange);
+
+        //Cursor cursor = Instances.query(getContentResolver(), projection, beginRange, endRange, queryString);
+        Cursor cursor = Instances.query(getContentResolver(), projection, beginRange, endRange);
+        //Cursor cursor = getContentResolver().query(builder.build(), null, null, null, Instances.DTSTART + " ASC");
         ContentValues values = new ContentValues();
 
         final int BEGIN = cursor.getColumnIndex(Instances.BEGIN);
         final int END = cursor.getColumnIndex(Instances.END);
         final int EVENT_ID = cursor.getColumnIndex(Instances.EVENT_ID);
 
-        FreeTimeDbHelper freeTimeDbHelper = new FreeTimeDbHelper(getApplicationContext());
+        FreeTimeDbHelper freeTimeDbHelper;
+
+        if(db == null) {
+            freeTimeDbHelper = new FreeTimeDbHelper(getApplicationContext());
+        }
+        else {
+            freeTimeDbHelper = db;
+        }
+
 
         //TODO: ignore instances of AllDay Events, and perhaps Events with availability = available.
 
@@ -211,11 +229,11 @@ public class FreeTimeCalendarService extends Service {
                 values.put(FreeTimeDbContract.UnoccupiedTime.COLUMN_START_TIME, beginRange);
                 //add the BEGIN time of the found instance as the endtime of the empty slot
                 values.put(FreeTimeDbContract.UnoccupiedTime.COLUMN_END_TIME, cursor.getLong(BEGIN));
-
-                findUnoccupiedTimeSlots(cursor.getLong(END), endRange);
+                freeTimeDbHelper.getWritableDatabase().insert(FreeTimeDbContract.UnoccupiedTime.TABLE_NAME, null, values);
+                //findUnoccupiedTimeSlots(cursor.getLong(END), endRange, freeTimeDbHelper);
             }
             else {
-                findUnoccupiedTimeSlots(cursor.getLong(END), endRange);
+                findUnoccupiedTimeSlots(cursor.getLong(END), endRange, freeTimeDbHelper);
 
                 //region overly-complicated else case
                 /* if there is an event instance that starts at time=beginRange, the startTime of the first empty slot in the given range

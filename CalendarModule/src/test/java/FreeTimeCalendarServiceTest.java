@@ -1,4 +1,5 @@
 import android.content.Intent;
+import android.test.RenamingDelegatingContext;
 import android.test.ServiceTestCase;
 
 import java.util.Calendar;
@@ -6,6 +7,7 @@ import java.util.GregorianCalendar;
 
 import fr.unice.polytech.calendarmodule.FreeTimeCalendarService;
 import fr.unice.polytech.calendarmodule.FreeTimeCalendarService.FreeTimeBinder;
+import fr.unice.polytech.freetimedatabase.FreeTimeDbHelper;
 
 
 /**
@@ -25,10 +27,14 @@ public class FreeTimeCalendarServiceTest extends ServiceTestCase<FreeTimeCalenda
         ftcService = binder.getService();
     }
 
-    public void testDemo() throws Exception {
-        Calendar calStart = new GregorianCalendar(2014, 5, 11, 18, 0, 0);
-        Calendar calEnd = new GregorianCalendar(2014, 5, 11, 19, 30, 0);
-        ftcService.createEvent("Test Event", calStart, calEnd);
+    public void testFindEmptySlots() throws Exception {
+        Calendar calStart = new GregorianCalendar(2014, 5, 12, 0, 0, 0);
+        Calendar calEnd = new GregorianCalendar(2014, 5, 18, 23, 59, 0);
+        //ftcService.createEvent("Test Event", calStart, calEnd);
+
+        RenamingDelegatingContext context = new RenamingDelegatingContext(getContext(), "test_");
+        FreeTimeDbHelper db = new FreeTimeDbHelper(context);
+        ftcService.findUnoccupiedTimeSlots(calStart.getTimeInMillis(), calEnd.getTimeInMillis(), db);
         final int expected = 1;
         final int reality = 5;
         assertEquals(expected, reality);

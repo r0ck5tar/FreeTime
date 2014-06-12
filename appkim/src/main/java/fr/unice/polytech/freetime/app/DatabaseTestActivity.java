@@ -68,7 +68,7 @@ public class DatabaseTestActivity extends Activity {
         Calendar calStart = new GregorianCalendar(startYear, startMonth, startDay, startHour, startMinute);
         Calendar calEnd = new GregorianCalendar(endYear, endMonth, endDay, endHour, endMinute);
 
-        app.getFtcService().findUnoccupiedTimeSlots(calStart.getTimeInMillis(), calEnd.getTimeInMillis());
+        app.getFtcService().findUnoccupiedTimeSlots(calStart.getTimeInMillis(), calEnd.getTimeInMillis(), null);
 
     }
 }
