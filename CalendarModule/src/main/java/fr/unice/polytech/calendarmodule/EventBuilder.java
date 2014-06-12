@@ -15,9 +15,9 @@ import java.util.TimeZone;
  */
 @SuppressWarnings("ResourceType")
 public class EventBuilder {
-    private ContentValues values;
-    private Calendar calStart;
-    private Calendar calEnd;
+    protected ContentValues values;
+    protected Calendar calStart;
+    protected Calendar calEnd;
 
     public EventBuilder(){
         this(-1);

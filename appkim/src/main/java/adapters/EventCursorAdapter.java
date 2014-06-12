@@ -7,10 +7,7 @@ import android.view.View;
 import android.widget.ResourceCursorAdapter;
 import android.widget.TextView;
 
-import java.text.DateFormat;
 import java.util.Date;
-
-import javax.xml.datatype.DatatypeConfigurationException;
 
 import fr.unice.polytech.freetime.app.R;
 
@@ -26,7 +23,7 @@ public class EventCursorAdapter extends ResourceCursorAdapter {
     public void bindView(View view, Context context, Cursor cursor) {
         ((TextView)view.findViewById(R.id.eventId)).setText(cursor.getString(cursor.getColumnIndexOrThrow(CalendarContract.Events._ID)));
 
-        ((TextView)view.findViewById(R.id.eventTitle)).setText(cursor.getString(cursor.getColumnIndexOrThrow(CalendarContract.Events.TITLE)));
+        ((TextView)view.findViewById(R.id.eventinfo_eventTitle)).setText(cursor.getString(cursor.getColumnIndexOrThrow(CalendarContract.Events.TITLE)));
 
         TextView startTime = ((TextView)view.findViewById(R.id.startDateTime));
         Date startDateTime = new Date(cursor.getLong(cursor.getColumnIndexOrThrow(CalendarContract.Events.DTSTART)));
