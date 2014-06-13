@@ -89,7 +89,9 @@ public class RecurrenceStringBuilder {
         String m = MONTH[g.get(Calendar.MONTH)];
         String d = (g.get(Calendar.DAY_OF_MONTH)<10)? "0"+g.get(Calendar.DAY_OF_MONTH):g.get(Calendar.DAY_OF_MONTH)+"";
         String result = g.get(Calendar.YEAR)+m+d+"T";
-        String h = (g.get(Calendar.HOUR)<10)?"0"+g.get(Calendar.HOUR):g.get(Calendar.HOUR)+"";
+        int pm_am = g.get(Calendar.AM_PM);
+        int hh = (pm_am == Calendar.PM)?g.get(Calendar.HOUR)+12:g.get(Calendar.HOUR);
+        String h = (hh<10)?"0"+hh:hh+"";
         String mi = (g.get(Calendar.MINUTE)<10)?"0"+g.get(Calendar.MINUTE):g.get(Calendar.MINUTE)+"";
         String s = (g.get(Calendar.SECOND)<10)?"0"+g.get(Calendar.SECOND):g.get(Calendar.SECOND)+"";
         return g.get(Calendar.YEAR)+m+d+"T"+h+mi+s;
@@ -175,7 +177,7 @@ public class RecurrenceStringBuilder {
     }
     public RecurrenceStringBuilder weekStart(int day) throws IndexDayOutOfBoundException {
         if(day<0 || day>6)throw new IndexDayOutOfBoundException(day);
-        rruleArgs.put(WEEK_START,day+"");return this;
+        rruleArgs.put(WEEK_START,DAYS[day]);return this;
     }
 
     public String getRRule(){
