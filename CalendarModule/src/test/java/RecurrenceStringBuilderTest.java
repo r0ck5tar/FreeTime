@@ -95,15 +95,63 @@ public class RecurrenceStringBuilderTest extends InstrumentationTestCase {
         assertEquals("RRULE:COUNT=10;FREQ=WEEKLY;WKST=SU;BYDAY=TU,TH", rb11.getRRule());
         assertEquals("RRULE:WKST=SU;UNTIL=19971224T000000Z;BYDAY=MO,WE,FR;INTERVAL=2;FREQ=WEEKLY", rb12.getRRule());
     }
-    //@Test(expected = IndexDayOutOfBoundException.class)
-    public void testIndexDayOutOfBoundException()throws IndexDayOutOfBoundException{
+
+    public void testOthersSamples(){
+        RecurrenceStringBuilder rb1 = new RecurrenceStringBuilder();
+        rb1.freqByMonth();
+        assertEquals("RRULE:FREQ=MONTHLY",rb1.getRRule());
+
+        RecurrenceStringBuilder rb2 = new RecurrenceStringBuilder();
+        rb2.freqByMinute();
+        assertEquals("RRULE:FREQ=MINUTELY",rb2.getRRule());
+
+        RecurrenceStringBuilder rb3 = new RecurrenceStringBuilder();
+        rb3.freqByHour();
+        assertEquals("RRULE:FREQ=HOURLY",rb3.getRRule());
+
+        RecurrenceStringBuilder rb4 = new RecurrenceStringBuilder();
+        rb4.byMonthDay(10);
+        assertEquals("RRULE:BYMONTHDAY=10",rb4.getRRule());
+
+        RecurrenceStringBuilder rb5 = new RecurrenceStringBuilder();
+        rb5.byYearDay(30);
+        assertEquals("RRULE:BYYEARDAY=30",rb5.getRRule());
+
+        RecurrenceStringBuilder rb6 = new RecurrenceStringBuilder();
+        rb6.byWeekNumber(30);
+        assertEquals("RRULE:BYWEEKNO=30",rb6.getRRule());
+
+    }
+
+    public void testGetterSetter(){
         RecurrenceStringBuilder rb = new RecurrenceStringBuilder();
-        rb.byDay(7);
+        rb.repetition(5);
+        RecurrenceStringBuilder rbT = new RecurrenceStringBuilder();
+        rbT.setRruleArgs(rb.getRruleArgs());
+
+        assertEquals(rb.getRruleArgs(),rbT.getRruleArgs());
+    }
+    //@Test(expected = IndexDayOutOfBoundException.class)
+    public void testIndexDayOutOfBoundException(){
+        RecurrenceStringBuilder rb = new RecurrenceStringBuilder();
+        boolean exception = false;
+        try {
+            rb.byDay(7);
+        } catch (IndexDayOutOfBoundException e) {
+            exception = true;
+        }
+        assertTrue(exception);
     }
     //@Test(expected = IndexMonthOutOfBoundException.class)
-    public void testIndexMonthOutOfBoundException()throws IndexMonthOutOfBoundException{
+    public void testIndexMonthOutOfBoundException(){
         RecurrenceStringBuilder rb = new RecurrenceStringBuilder();
-        rb.byMonth(12);
+        boolean exception  = false;
+        try {
+            rb.byMonth(12);
+        } catch (IndexMonthOutOfBoundException e) {
+            exception = true;
+        }
+        assertTrue(exception);
     }
 
 }
