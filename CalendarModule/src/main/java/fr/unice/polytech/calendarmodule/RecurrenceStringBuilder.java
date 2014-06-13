@@ -33,6 +33,8 @@ public class RecurrenceStringBuilder {
     private static final String BYMONTHDAY  = "BYMONTHDAY";
     private static final String BYYEARDAY   = "BYYEARDAY";
     private static final String BYWEEKNO    = "BYWEEKNO";
+    private static final String BYHOUR      = "BYHOUR";
+    private static final String BYMINUTE    = "BYMINUTE";
     private static final String WEEK_START  = "WKST";
 
     //Recursive attributes
@@ -175,13 +177,29 @@ public class RecurrenceStringBuilder {
         }
         return this;
     }
+    public RecurrenceStringBuilder byHour(int hour){
+        if(rruleArgs.containsKey(BYHOUR)){
+            rruleArgs.put(BYHOUR, rruleArgs.get(BYHOUR)+SEP_ATTR+hour);
+        }else {
+            rruleArgs.put(BYHOUR, hour + "");
+        }
+        return this;
+    }
+    public RecurrenceStringBuilder byMinute(int minute){
+        if(rruleArgs.containsKey(BYMINUTE)){
+            rruleArgs.put(BYMINUTE, rruleArgs.get(BYMINUTE)+SEP_ATTR+minute);
+        }else {
+            rruleArgs.put(BYMINUTE, minute + "");
+        }
+        return this;
+    }
     public RecurrenceStringBuilder weekStart(int day) throws IndexDayOutOfBoundException {
         if(day<0 || day>6)throw new IndexDayOutOfBoundException(day);
         rruleArgs.put(WEEK_START,DAYS[day]);return this;
     }
 
     public String getRRule(){
-        String result = RRULE+SEP;
+        String result ="";
         int i=0;
         for(String key : rruleArgs.keySet()){
             if(i==0) {

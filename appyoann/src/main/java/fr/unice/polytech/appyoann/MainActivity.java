@@ -19,11 +19,15 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.GregorianCalendar;
+import java.util.TimeZone;
 
+import fr.unice.polytech.calendarmodule.EventBuilder;
 import fr.unice.polytech.calendarmodule.FreeTimeCalendarService;
-import fr.unice.polytech.taskmodule.Task;
-import fr.unice.polytech.taskmodule.WrongEndTaskException;
-import fr.unice.polytech.taskmodule.WrongStartTaskException;
+import fr.unice.polytech.calendarmodule.RecurrenceStringBuilder;
+import fr.unice.polytech.entities.Task;
+import fr.unice.polytech.entities.TaskBuilder;
+import fr.unice.polytech.entities.WrongEndTaskException;
+import fr.unice.polytech.entities.WrongStartTaskException;
 
 
 public class MainActivity extends Activity {
@@ -89,10 +93,10 @@ public class MainActivity extends Activity {
         idCalendar = ftcService.getFreeTimeCalendarId();
         System.out.println(idCalendar);
 
+        /*
         //Recherche du type choisi
         String chosen = ((RadioButton)findViewById(((RadioGroup)findViewById(R.id.radioGroup)).getCheckedRadioButtonId())).getText().toString();
         System.out.println("Chosen "+ chosen);
-        Task.TASK_TYPE type =Task.stringToEnum(chosen);
 
         EditText title = (EditText)findViewById(R.id.titleEditText);
         if(title.getText() == null || "".equals(title.getText().toString())){
@@ -110,10 +114,22 @@ public class MainActivity extends Activity {
 
         System.out.println(beginT+" to "+endT);
         System.out.println(desc);
+*/
+        EventBuilder result= new EventBuilder(idCalendar);
+        result.createEvent("TEST");
+        result.startY(2014).startM(5).startD(15).startH(16).startM(30).finalizeStartTime();
+        result.description("toto");
+        result.timeZone(TimeZone.getDefault().getID());
+        //result.rRule(new RecurrenceStringBuilder().freqByDay().repetition(10).getRRule());
+        result.rRule("FREQ=DAILY;BYHOUR=");
+        result.duration("PT15M");
+        result.finalizeEvent(getContentResolver());
 
-        Task result= new Task(type,title.getText().toString());
+        /*
         result.setAllDay(allday);
+
         result.setDescription(desc);
+        result.setType(Task.stringToEnum(chosen));
 
         try {
             result.setTaskStart(stringToCalendar(beginT));
@@ -126,7 +142,8 @@ public class MainActivity extends Activity {
             return;
         }
 
-        long idEvent = result.publish(idCalendar,getContentResolver());
+        result.createTask(idCalendar, getContentResolver());
+        */
     }
 
     public GregorianCalendar stringToCalendar(String s){

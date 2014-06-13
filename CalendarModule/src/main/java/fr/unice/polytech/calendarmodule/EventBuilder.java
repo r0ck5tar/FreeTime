@@ -73,6 +73,7 @@ public class EventBuilder {
     public EventBuilder allDay(boolean allDay) { values.put(Events.ALL_DAY, allDay? 1:0); return this;}
     public EventBuilder organizer(String organizer) { values.put(Events.ORGANIZER, organizer); return this; }
     public EventBuilder availability(int availability ) { values.put(Events.AVAILABILITY, availability); return this;}
+    public EventBuilder duration(String duration){values.put(Events.DURATION,duration);return this;}
     public EventBuilder rRule(String rRule) { values.put(Events.RRULE, rRule); return this; }
 
     public long finalizeEvent(ContentResolver contentResolver) {

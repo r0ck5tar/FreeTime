@@ -81,45 +81,55 @@ public class RecurrenceStringBuilderTest extends InstrumentationTestCase {
         } catch (IndexDayOutOfBoundException e) {
             e.printStackTrace();
         }
+        RecurrenceStringBuilder rb13 = new RecurrenceStringBuilder();
+        rb13.freqByDay().byHour(9).byHour(10).byHour(11).byHour(12)
+                .byHour(13).byHour(14).byHour(15).byHour(16)
+                .byMinute(0).byMinute(20).byMinute(40);
 
-        assertEquals("RRULE:COUNT=10;FREQ=DAILY", rb1.getRRule());
-        assertEquals("RRULE:FREQ=DAILY;UNTIL=19971224T000000Z", rb2.getRRule());
-        assertEquals("RRULE:INTERVAL=2;FREQ=DAILY", rb3.getRRule());
-        assertEquals("RRULE:COUNT=5;INTERVAL=2;FREQ=DAILY", rb4.getRRule());
-        assertEquals("RRULE:FREQ=YEARLY;BYMONTH=1;UNTIL=19971224T140000Z;BYDAY=SU,MO,TU,WE,TH,FR,SA", rb5.getRRule());
-        assertEquals("RRULE:FREQ=DAILY;BYMONTH=1;UNTIL=19971224T140000Z", rb6.getRRule());
-        assertEquals("RRULE:COUNT=10;FREQ=WEEKLY", rb7.getRRule());
-        assertEquals("RRULE:FREQ=WEEKLY;UNTIL=19971224T000000Z", rb8.getRRule());
-        assertEquals("RRULE:INTERVAL=2;FREQ=DAILY;WKST=SU", rb9.getRRule());
-        assertEquals("RRULE:FREQ=WEEKLY;UNTIL=19971224T000000Z;BYDAY=TU,TH", rb10.getRRule());
-        assertEquals("RRULE:COUNT=10;FREQ=WEEKLY;WKST=SU;BYDAY=TU,TH", rb11.getRRule());
-        assertEquals("RRULE:WKST=SU;UNTIL=19971224T000000Z;BYDAY=MO,WE,FR;INTERVAL=2;FREQ=WEEKLY", rb12.getRRule());
+        RecurrenceStringBuilder rb14 = new RecurrenceStringBuilder();
+        rb14.freqByMinute().interval(20).byHour(9).byHour(10).byHour(11)
+                .byHour(12).byHour(13).byHour(14).byHour(15).byHour(16);
+
+        assertEquals("COUNT=10;FREQ=DAILY", rb1.getRRule());
+        assertEquals("FREQ=DAILY;UNTIL=19971224T000000Z", rb2.getRRule());
+        assertEquals("INTERVAL=2;FREQ=DAILY", rb3.getRRule());
+        assertEquals("COUNT=5;INTERVAL=2;FREQ=DAILY", rb4.getRRule());
+        assertEquals("FREQ=YEARLY;BYMONTH=1;UNTIL=19971224T140000Z;BYDAY=SU,MO,TU,WE,TH,FR,SA", rb5.getRRule());
+        assertEquals("FREQ=DAILY;BYMONTH=1;UNTIL=19971224T140000Z", rb6.getRRule());
+        assertEquals("COUNT=10;FREQ=WEEKLY", rb7.getRRule());
+        assertEquals("FREQ=WEEKLY;UNTIL=19971224T000000Z", rb8.getRRule());
+        assertEquals("INTERVAL=2;FREQ=DAILY;WKST=SU", rb9.getRRule());
+        assertEquals("FREQ=WEEKLY;UNTIL=19971224T000000Z;BYDAY=TU,TH", rb10.getRRule());
+        assertEquals("COUNT=10;FREQ=WEEKLY;WKST=SU;BYDAY=TU,TH", rb11.getRRule());
+        assertEquals("WKST=SU;UNTIL=19971224T000000Z;BYDAY=MO,WE,FR;INTERVAL=2;FREQ=WEEKLY", rb12.getRRule());
+        assertEquals("BYHOUR=9,10,11,12,13,14,15,16;FREQ=DAILY;BYMINUTE=0,20,40",rb13.getRRule());
+        assertEquals("BYHOUR=9,10,11,12,13,14,15,16;INTERVAL=20;FREQ=MINUTELY",rb14.getRRule());
     }
 
     public void testOthersSamples(){
         RecurrenceStringBuilder rb1 = new RecurrenceStringBuilder();
         rb1.freqByMonth();
-        assertEquals("RRULE:FREQ=MONTHLY",rb1.getRRule());
+        assertEquals("FREQ=MONTHLY",rb1.getRRule());
 
         RecurrenceStringBuilder rb2 = new RecurrenceStringBuilder();
         rb2.freqByMinute();
-        assertEquals("RRULE:FREQ=MINUTELY",rb2.getRRule());
+        assertEquals("FREQ=MINUTELY",rb2.getRRule());
 
         RecurrenceStringBuilder rb3 = new RecurrenceStringBuilder();
         rb3.freqByHour();
-        assertEquals("RRULE:FREQ=HOURLY",rb3.getRRule());
+        assertEquals("FREQ=HOURLY",rb3.getRRule());
 
         RecurrenceStringBuilder rb4 = new RecurrenceStringBuilder();
         rb4.byMonthDay(10);
-        assertEquals("RRULE:BYMONTHDAY=10",rb4.getRRule());
+        assertEquals("BYMONTHDAY=10",rb4.getRRule());
 
         RecurrenceStringBuilder rb5 = new RecurrenceStringBuilder();
         rb5.byYearDay(30);
-        assertEquals("RRULE:BYYEARDAY=30",rb5.getRRule());
+        assertEquals("BYYEARDAY=30",rb5.getRRule());
 
         RecurrenceStringBuilder rb6 = new RecurrenceStringBuilder();
         rb6.byWeekNumber(30);
-        assertEquals("RRULE:BYWEEKNO=30",rb6.getRRule());
+        assertEquals("BYWEEKNO=30",rb6.getRRule());
 
     }
 
