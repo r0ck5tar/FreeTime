@@ -2,6 +2,8 @@ package fr.unice.polytech.calendarmodule;
 
 import android.annotation.TargetApi;
 import android.app.Service;
+import android.content.ContentProvider;
+import android.content.ContentResolver;
 import android.content.ContentUris;
 import android.content.ContentValues;
 import android.content.Intent;
@@ -14,10 +16,13 @@ import android.os.Build;
 import android.os.IBinder;
 import android.provider.CalendarContract;
 import android.provider.CalendarContract.*;
+import android.util.Log;
 import android.widget.CursorAdapter;
 import android.widget.Toast;
 
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.TimeZone;
 
@@ -91,14 +96,19 @@ public class FreeTimeCalendarService extends Service {
         Cursor cursor = getContentResolver().query(Calendars.CONTENT_URI,
                 projection, selection, selArgs, null);
         if (cursor.moveToFirst()) {
-            return cursor.getLong(0);
+            long calId = cursor.getLong(0);
+            cursor.close();
+            return calId;
         }
         else{
             Uri uri = createCalendar();
             cursor = getContentResolver().query(uri, projection, null, null, null);
             if (cursor.moveToFirst()) {
-                return cursor.getLong(0);
+                long calId = cursor.getLong(0);
+                cursor.close();
+                return calId;
             }
+            cursor.close();
             return 0;
         }
     }
@@ -128,6 +138,8 @@ public class FreeTimeCalendarService extends Service {
                     .availability(availability).finalizeEvent(getContentResolver());
 
             }while(ec.moveToNext());
+
+            ec.close();
         }
     }
 
@@ -180,101 +192,90 @@ public class FreeTimeCalendarService extends Service {
     }
 
     public void findUnoccupiedTimeSlots(long beginRange, long endRange, FreeTimeDbHelper db) {
+
         String[] projection = new String[] {
-                Instances._ID, Instances.BEGIN, Instances.END, Instances.EVENT_ID
+                Instances._ID, Instances.BEGIN, Instances.END, Instances.EVENT_ID, Instances.CALENDAR_ID, Instances.TITLE
         };
-        //TODO perhaps the search query string should be passed as well, so we can order the query results in ascending order of Instances.BEGIN
-        SQLiteQueryBuilder queryBuilder = new SQLiteQueryBuilder();
-        //queryBuilder.setTables(CalendarContract.Instances.);
-        String queryString = queryBuilder.buildQuery(projection, null, null, null, Instances.BEGIN + " ASC", null);
 
-        Uri.Builder builder = CalendarContract.Instances.CONTENT_BY_DAY_URI.buildUpon();
-        ContentUris.appendId(builder, beginRange);
-        ContentUris.appendId(builder, endRange);
+        String selection = CalendarContract.Instances.CALENDAR_ID + " = ? AND " + Instances.BEGIN + " > ? " ;
+        String[] selArgs = new String[]{String.valueOf(freeTimeCalendarId), String.valueOf(beginRange)};
 
-        //Cursor cursor = Instances.query(getContentResolver(), projection, beginRange, endRange, queryString);
-        Cursor cursor = Instances.query(getContentResolver(), projection, beginRange, endRange);
-        //Cursor cursor = getContentResolver().query(builder.build(), null, null, null, Instances.DTSTART + " ASC");
-        ContentValues values = new ContentValues();
-
-        final int BEGIN = cursor.getColumnIndex(Instances.BEGIN);
-        final int END = cursor.getColumnIndex(Instances.END);
-        final int EVENT_ID = cursor.getColumnIndex(Instances.EVENT_ID);
 
         FreeTimeDbHelper freeTimeDbHelper;
 
-        if(db == null) {
-            freeTimeDbHelper = new FreeTimeDbHelper(getApplicationContext());
-        }
-        else {
-            freeTimeDbHelper = db;
-        }
+        if(db == null) { freeTimeDbHelper = new FreeTimeDbHelper(getApplicationContext()); }
+        else { freeTimeDbHelper = db; }
 
+        findUnoccupiedTimeSlots(projection, selection, beginRange, endRange, freeTimeDbHelper);
+    }
+
+    private void findUnoccupiedTimeSlots(String[] projection, String selection, long beginRange, long endRange, FreeTimeDbHelper db) {
+        String[] selArgs = new String[]{String.valueOf(freeTimeCalendarId), String.valueOf(beginRange)};
+
+        SimpleDateFormat df = new SimpleDateFormat("yyyy.MM.dd 'at' HH:mm:ss z");
+        Log.d("findUnoccupiedTimeSlots", "calling with beginRange = "
+                + df.format(new Date(beginRange)) + " endRange = " + df.format(new Date(endRange)));
+
+        Uri.Builder builder = CalendarContract.Instances.CONTENT_URI.buildUpon();
+        ContentUris.appendId(builder, beginRange);
+        ContentUris.appendId(builder, endRange);
+
+        Cursor cursor = getContentResolver().query(builder.build(), projection, selection, selArgs, Instances.BEGIN + " ASC");
+
+        final int BEGIN = cursor.getColumnIndex(Instances.BEGIN);
+        final int END = cursor.getColumnIndex(Instances.END);
+        final int TITLE = cursor.getColumnIndex(Instances.TITLE);
+
+        ContentValues values = new ContentValues();
+
+        Log.d("findUnoccupiedTimeSlots", "nb Events found = " + cursor.getCount());
 
         //TODO: ignore instances of AllDay Events, and perhaps Events with availability = available.
 
         if(cursor.getCount() == 0) {
+            Log.i("FreeTime", "No events found");
             //If there are no event instances in a given time range, that whole time range is an empty slot
             values.put(FreeTimeDbContract.UnoccupiedTime.COLUMN_START_TIME, beginRange);
             values.put(FreeTimeDbContract.UnoccupiedTime.COLUMN_END_TIME, endRange);
-            freeTimeDbHelper.getWritableDatabase().insert(FreeTimeDbContract.UnoccupiedTime.TABLE_NAME, null, values);
+            db.getWritableDatabase().insert(FreeTimeDbContract.UnoccupiedTime.TABLE_NAME, null, values);
+            cursor.close();
         }
 
         else {
             values.clear(); //Always remember to clear the values in the ContentValues object before reusing it for putting other values
             cursor.moveToFirst();
             if(cursor.getLong(BEGIN) != beginRange) {
+                Log.d("findUnoccupiedTimeSlots", "event found = " + cursor.getString(TITLE)
+                        + "  start: " + df.format(new Date(cursor.getLong(BEGIN)))
+                        + "  end: " + df.format(new Date(cursor.getLong(END))));
                 //the starttime of the first empty slot in a given time range is equal to the start time of that time range (beginRange)
                 //if there is no event instance that starts at time=beginRange
                 values.put(FreeTimeDbContract.UnoccupiedTime.COLUMN_START_TIME, beginRange);
                 //add the BEGIN time of the found instance as the endtime of the empty slot
                 values.put(FreeTimeDbContract.UnoccupiedTime.COLUMN_END_TIME, cursor.getLong(BEGIN));
-                freeTimeDbHelper.getWritableDatabase().insert(FreeTimeDbContract.UnoccupiedTime.TABLE_NAME, null, values);
-                //findUnoccupiedTimeSlots(cursor.getLong(END), endRange, freeTimeDbHelper);
+                db.getWritableDatabase().insert(FreeTimeDbContract.UnoccupiedTime.TABLE_NAME, null, values);
+                long newBeginRange = cursor.getLong(END);
+                cursor.close();
+                findUnoccupiedTimeSlots(newBeginRange, endRange, db);
             }
             else {
-                findUnoccupiedTimeSlots(cursor.getLong(END), endRange, freeTimeDbHelper);
-
-                //region overly-complicated else case
-                /* if there is an event instance that starts at time=beginRange, the startTime of the first empty slot in the given range
-                   is equal to the END time of the instance */
-                /*
-                values.put(FreeTimeDbContract.UnoccupiedTime.COLUMN_START_TIME, cursor.getLong(END));
-                if (cursor.isLast()) {
-                    values.put(FreeTimeDbContract.UnoccupiedTime.COLUMN_END_TIME, endRange);
-                    freeTimeDbHelper.getWritableDatabase().insert(FreeTimeDbContract.UnoccupiedTime.TABLE_NAME, null, values);
-                }
-
-                else {
-                    cursor.moveToNext();
-                    values.put(FreeTimeDbContract.UnoccupiedTime.COLUMN_END_TIME, cursor.getLong(BEGIN));
-                }
-                */
-                //endregion
+                Log.d("findUnoccupiedTimeSlots", "event found = " + cursor.getString(TITLE)
+                        + "  start: " + df.format(new Date(cursor.getLong(BEGIN)))
+                        + "  end: " + df.format(new Date(cursor.getLong(END))));
+                long newBeginRange = cursor.getLong(END);
+                cursor.close();
+                findUnoccupiedTimeSlots(newBeginRange, endRange, db);
             }
         }
-
-        //region old code
-        /*
-        if(cursor.getCount() > 0 ) {
-
-            cursor.moveToFirst();
-
-            if (!cursor.isAfterLast()) {
-                System.out.println("Event found: " + cursor.getLong(0));
-
-                ContentValues values = new ContentValues();
-                values.put(FreeTimeDbContract.UnoccupiedTime.COLUMN_END_TIME, cursor.getLong(cursor.getColumnIndex(Instances.END)));
-                values.put(FreeTimeDbContract.UnoccupiedTime.COLUMN_START_TIME, cursor.getLong(cursor.getColumnIndex(Instances.BEGIN)));
-
-
-                FreeTimeDbHelper freeTimeDbHelper = new FreeTimeDbHelper(getApplicationContext());
-                freeTimeDbHelper.getWritableDatabase()
-                        .insert(FreeTimeDbContract.UnoccupiedTime.TABLE_NAME, null, values);
-
-            }
-        }
-       */
-        //endregion
     }
+
+    public void addFreeTimeBlock(String day, long startTime, long endTime) {
+
+    }
+
+    public void createRecurringTask(String title, int[] days, long startTime, long endTime) {
+
+    }
+
+
 }
