@@ -31,7 +31,7 @@ public class Controller implements CustomListener {
 
     @Override
     public void onCreateNewTask(String title, long timeEstimation, long startDate, long endDate, int priority) {
-        Optimiser.addTaskToCalendar(title, timeEstimation, startDate, endDate, priority);
+        Optimiser.addTaskToCalendar(calendar, title, timeEstimation, startDate, endDate, priority);
     }
 }
 

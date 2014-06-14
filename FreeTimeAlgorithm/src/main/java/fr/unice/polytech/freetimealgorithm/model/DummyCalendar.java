@@ -10,12 +10,10 @@ import java.util.Collections;
  * Created by Hakim on 13/06/14.
  */
 public class DummyCalendar {
+    //A list of all the user's events (user created Events and also Events created by the optimiser)
+    //The events in this list are always sorted in increasing order of startTime.
     ArrayList<Event> events = new ArrayList<Event>();
     private DummyCalendarListener listener;
-
-    public void addEvent(Event e) {
-        events.add(e);
-    }
 
     public void addEvent(String title, long startTime, long endTime) {
         events.add(new Event(title, startTime, endTime));
@@ -26,6 +24,15 @@ public class DummyCalendar {
         listener.updateEvents(events);
     }
 
+    public void setListener(DummyCalendarListener listener) {
+        this.listener = listener;
+    }
+
+    public ArrayList<Event> getEvents() {
+        return events;
+    }
+
+    //Not really sure what this method could be useful for.
     public Event getEvent(String eventTitle) {
         for(Event e : events) {
             if (e.getTitle().equals(eventTitle)) {
@@ -34,13 +41,5 @@ public class DummyCalendar {
         }
 
         return null;
-    }
-
-    public void setListener(DummyCalendarListener listener) {
-        this.listener = listener;
-    }
-
-    public ArrayList<Event> getEvents() {
-        return events;
     }
 }

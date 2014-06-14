@@ -5,6 +5,7 @@ package fr.unice.polytech.freetimealgorithm.model;
  */
 public class FtEvent implements Comparable<Object> {
     private Event event;
+    private boolean completed = false;
     private Task parentTask;
 
     public FtEvent(Event event, Task parent) {
@@ -12,7 +13,13 @@ public class FtEvent implements Comparable<Object> {
         this.parentTask = parent;
     }
 
+    public long getDuration() { return event.getEndTime() - event.getStartTime(); }
+
+    public void setCompleted(boolean completed) { this.completed = completed; }
+    public boolean isCompleted() { return completed;}
     public Task getParent() { return parentTask; }
+    public long getStartTime() { return event.getStartTime(); }
+    public long getEndTime() { return event.getEndTime(); }
 
     @Override
     public int compareTo(Object o) {
@@ -40,4 +47,5 @@ public class FtEvent implements Comparable<Object> {
 
         else return -1;
     }
+
 }
