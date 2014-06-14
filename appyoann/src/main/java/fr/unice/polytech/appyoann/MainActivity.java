@@ -2,12 +2,18 @@ package fr.unice.polytech.appyoann;
 
 import android.app.Activity;
 import android.content.ComponentName;
+import android.content.ContentResolver;
+import android.content.ContentUris;
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.graphics.Color;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.IBinder;
+import android.provider.CalendarContract;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -18,6 +24,7 @@ import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.util.ArrayList;
 import java.util.GregorianCalendar;
 import java.util.TimeZone;
 
@@ -33,6 +40,7 @@ import fr.unice.polytech.entities.WrongStartTaskException;
 public class MainActivity extends Activity {
     private FreeTimeCalendarService ftcService;
     private long idCalendar;
+    private static final int INIT_ID_CALENDAR = 0;
 
 
     private ServiceConnection ftcServiceConnection = new ServiceConnection() {
@@ -55,6 +63,7 @@ public class MainActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        idCalendar=INIT_ID_CALENDAR;
         bindService(new Intent(getApplicationContext(), FreeTimeCalendarService.class), ftcServiceConnection, Context.BIND_AUTO_CREATE);
 
     }
@@ -87,63 +96,66 @@ public class MainActivity extends Activity {
 
     }
 
-    public void onClickCreate(View view){
-        //Appel de free time calendar
-        System.out.println("Reading Calendar");
-        idCalendar = ftcService.getFreeTimeCalendarId();
-        System.out.println(idCalendar);
+    /**
+     * Test 1 : Recurrence Events construct with RecurrenceStringBuilder
+     */
+    private static final String DELETE_TEST_1 = "DELETE_TEST_1";
+    private ArrayList<Long> eventsTest1;
+    public ArrayList<String> init_rrule_test_1(){
+        return null;
+        //todo
+    }
+    public void onClickTest_1(View view){
+        //First we delete the test 1
+        onClickDelTest_1(view);
 
-        /*
-        //Recherche du type choisi
-        String chosen = ((RadioButton)findViewById(((RadioGroup)findViewById(R.id.radioGroup)).getCheckedRadioButtonId())).getText().toString();
-        System.out.println("Chosen "+ chosen);
-
-        EditText title = (EditText)findViewById(R.id.titleEditText);
-        if(title.getText() == null || "".equals(title.getText().toString())){
-            ((TextView)findViewById(R.id.errorView)).setTextColor(Color.RED);
-            ((TextView)findViewById(R.id.errorView)).setText("Put a title plz");
-            return;
-        }else{
-            System.out.println("#"+((EditText)findViewById(R.id.titleEditText)).getText());
-            ((TextView)findViewById(R.id.errorView)).setText("");
+        //Second Call de free time calendar if it isn't
+        if(idCalendar == INIT_ID_CALENDAR) {
+            System.out.println("Reading Calendar");
+            idCalendar = ftcService.getFreeTimeCalendarId();
+            System.out.println(idCalendar);
         }
-        boolean allday = (((CheckBox)findViewById(R.id.allDayCheckBox)).isChecked())? true:false;
-        String beginT = ((EditText)findViewById(R.id.editText)).getText().toString();
-        String endT = ((EditText)findViewById(R.id.editText2)).getText().toString();
-        String desc = ((EditText)findViewById(R.id.editText3)).getText().toString();
 
-        System.out.println(beginT+" to "+endT);
-        System.out.println(desc);
+/*
+        EventBuilder test1= new EventBuilder(idCalendar);
+        EventBuilder result= new EventBuilder(idCalendar);
+        EventBuilder result= new EventBuilder(idCalendar);
+        EventBuilder result= new EventBuilder(idCalendar);
+        EventBuilder result= new EventBuilder(idCalendar);
+        EventBuilder result= new EventBuilder(idCalendar);
+        EventBuilder result= new EventBuilder(idCalendar);
+        EventBuilder result= new EventBuilder(idCalendar);
+        EventBuilder result= new EventBuilder(idCalendar);
+        EventBuilder result= new EventBuilder(idCalendar);
+        EventBuilder result= new EventBuilder(idCalendar);
+        EventBuilder result= new EventBuilder(idCalendar);
 */
+
+
         EventBuilder result= new EventBuilder(idCalendar);
         result.createEvent("TEST");
-        result.startY(2014).startM(5).startD(15).startH(16).startM(30).finalizeStartTime();
+        result.startY(2014).startM(5).startD(15).startH(8).finalizeStartTime();
         result.description("toto");
         result.timeZone(TimeZone.getDefault().getID());
         //result.rRule(new RecurrenceStringBuilder().freqByDay().repetition(10).getRRule());
-        result.rRule("FREQ=DAILY;BYHOUR=");
+        result.rRule("FREQ=DAILY;BYHOUR=8,16;COUNT=5");
         result.duration("PT15M");
-        result.finalizeEvent(getContentResolver());
+        eventsTest1.add(result.finalizeEvent(getContentResolver()));
 
-        /*
-        result.setAllDay(allday);
+    }
 
-        result.setDescription(desc);
-        result.setType(Task.stringToEnum(chosen));
-
-        try {
-            result.setTaskStart(stringToCalendar(beginT));
-            result.setTaskEnd(stringToCalendar(endT));
-        } catch (WrongStartTaskException e) {
-            e.printStackTrace();
-            return;
-        } catch (WrongEndTaskException e) {
-            e.printStackTrace();
+    public void onClickDelTest_1(View view){
+        if(idCalendar == INIT_ID_CALENDAR){
             return;
         }
-
-        result.createTask(idCalendar, getContentResolver());
-        */
+        for(Long eventID : eventsTest1){
+            ContentResolver cr = getContentResolver();
+            ContentValues values = new ContentValues();
+            Uri deleteUri = null;
+            deleteUri = ContentUris.withAppendedId(CalendarContract.Events.CONTENT_URI, eventID);
+            int rows = getContentResolver().delete(deleteUri, null, null);
+            Log.i(DELETE_TEST_1, "Rows deleted: " + rows);
+        }
     }
 
     public GregorianCalendar stringToCalendar(String s){
