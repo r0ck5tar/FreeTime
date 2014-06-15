@@ -40,4 +40,20 @@ public class EmptySlots {
         return emptySlots;
     }
 
+    public long getTotalEmptySlotDuration(long startRange, long endRange) {
+        long total = 0;
+        for (EmptySlot es : emptySlots) {
+            if(es.getStartTime() >= startRange && es.getEndTime() <= endRange) {
+                total += (es.getEndTime() - es.getStartTime());
+            }
+            else if(es.getStartTime() < startRange && es.getEndTime() > startRange && es.getEndTime() <= endRange ) {
+                total += (es.getEndTime() - startRange);
+            }
+            else if(es.getStartTime() > startRange && es.getStartTime() < endRange && es.getEndTime() > endRange) {
+                total += (endRange - es.getStartTime());
+            }
+        }
+        return total;
+    }
+
 }

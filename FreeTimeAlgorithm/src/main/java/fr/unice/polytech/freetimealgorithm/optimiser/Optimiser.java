@@ -7,10 +7,7 @@ import fr.unice.polytech.freetimealgorithm.optimiser.EmptySlots.EmptySlot;
 import fr.unice.polytech.freetimealgorithm.model.Task;
 import fr.unice.polytech.freetimealgorithm.tools.DateTools;
 
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.GregorianCalendar;
+import java.util.*;
 
 import static java.lang.Math.max;
 
@@ -28,7 +25,7 @@ public class Optimiser {
     private static long now = Calendar.getInstance().getTimeInMillis();
     private static long latestEndDate;  //the latest due date among all the tasks.
     private static EmptySlots emptySlots = new EmptySlots(); //The list of EmptySlots between now and latestEndDate.
-    private static long totalEmptySlotTime; //The total length of EmptySlot time between now and the endDate of a Task.
+    private static long nbFtEventsForNewTask;
     /*
        The sum of the requiredEstimatedTimeLeft for all the Tasks.
        Since some Tasks will have Events that are in the past (which might or might not have been completed), only the
@@ -36,7 +33,7 @@ public class Optimiser {
        of the task.
      */
     private static long totalEstimatedTimeRequired;
-    private static ArrayList<Task> currentTasks; //list of Tasks with endDate < now
+    private static ArrayList<Task> overlappingTasks; //list of Tasks which overlap with the new Task;
 
     public static void clearEmptySlots() { emptySlots.clearEmptySlots(); }
 
@@ -49,6 +46,9 @@ public class Optimiser {
 
         for(Event e : cal.getEvents()) {
             if(e.getStartTime() >= startTimeRange && e.getStartTime() < endTimeRange) {
+                detectedEvents.add(e);
+            }
+            else if(e.getEndTime() > startTimeRange && e.getEndTime() <= endTimeRange) {
                 detectedEvents.add(e);
             }
         }
@@ -87,58 +87,6 @@ public class Optimiser {
         return emptySlots.getEmptySlots();
     }
 
-    public static void addTaskToCalendar(DummyCalendar cal, String title, long timeEstimation, long startDate, long endDate, int priority) {
-        //Create a newTask, but don't add it to the tasks list yet (it should only be added at the end, once it has been
-        //split up into Events
-        Task newTask = new Task(title, timeEstimation, startDate, endDate, priority);
-
-        /*
-            Initialize the variables and parameters needed for the calculations in the algorithm.
-
-            # The value of now can be set by calling Optimiser.setNow() before calling the other methods of this class.
-              This can be useful for tests.
-            # First we get a list of the currentTasks. We also find the latestEndDate.
-            # Before detecting the empty slots, we call clearEmptySlots(), to clear the list of the previously found slots;
-            # Then we find all the empty slots between now and latestEndDate, using detectEmptySlotsDayByDay().
-              We call this method which calls the detectEmptySlots() method  in a loop, gradually filling up the EmptySlots
-              list with the EmptySlots detected for each 24 hour block between now and latestEndDate.
-         */
-        if (now == 0 ) { now = Calendar.getInstance().getTimeInMillis(); }
-        latestEndDate = newTask.getEndDate();
-        currentTasks = new ArrayList<Task>();
-        currentTasks.add(newTask); //The newTask is also a current Task if its endDate is in the future
-
-        for(Task t : tasks) {
-            //find the currentTasks (Tasks that have a due date that is in the future (i.e. endDate > now)
-            if(t.getEndDate() > now) {
-                currentTasks.add(t);
-            }
-            //find the latestEndDate
-            if(t.getEndDate() > latestEndDate) {
-                latestEndDate = t.getEndDate();
-            }
-        }
-
-        //Clear the EmptySlots list
-        clearEmptySlots();
-
-        //Call the detectEmptySlots method to fill up the EmptySlots list
-        detectEmptySlotsDayByDay(cal, max(now, newTask.getStartDate()), latestEndDate);
-
-        //We calculate the task weights for the currentTasks.
-        calculateAndSetTaskWeights(currentTasks);
-    }
-
-    private static void calculateAndSetTaskWeights(ArrayList<Task> tasks) {
-        //for now, we're not taking into account the priority.
-        for(Task t : tasks) {
-            long estimatedRemainingTime = t.estimatedRequiredTimeRemaining(now);
-            long timeLeftToDueDate = t.timeLeftToDueDate(now);
-            t.setWeight((double)t.estimatedRequiredTimeRemaining(now)/t.timeLeftToDueDate(now));
-            System.out.println("Task: " + t.getTitle() + "\t Weight = " + t.getWeight());
-        }
-    }
-
     private static void detectEmptySlotsDayByDay(DummyCalendar cal, long start, long end) {
         final long TWENTY_FOUR_HOURS = DateTools.hoursToMilis(24);
         final long ONE_SECOND = 1000;
@@ -164,8 +112,85 @@ public class Optimiser {
 
         long lastDayStart = nextDayStart;
         detectEmptySlots(cal, lastDayStart, end);
-
     }
+
+    public static void addTaskToCalendar(DummyCalendar cal, String title, long timeEstimation, long startDate, long endDate, int priority) {
+        final long ONE_HOUR = DateTools.hoursToMilis(1);
+        //Create a newTask, but don't add it to the tasks list yet (it should only be added at the end, once it has been
+        //split up into Events
+        Task newTask = new Task(title, timeEstimation, startDate, endDate, priority);
+
+        /*
+            Initialize the variables and parameters needed for the calculations in the algorithm.
+
+            # The value of now can be set by calling Optimiser.setNow() before calling the other methods of this class.
+              This can be useful for tests.
+            # First we get a list of the overlappingTasks. We also find the latestEndDate.
+            # Before detecting the empty slots, we call clearEmptySlots(), to clear the list of the previously found slots;
+            # Then we find all the empty slots between now and latestEndDate, using detectEmptySlotsDayByDay().
+              We call this method which calls the detectEmptySlots() method  in a loop, gradually filling up the EmptySlots
+              list with the EmptySlots detected for each 24 hour block between now and latestEndDate.
+         */
+        if (now == 0 ) { now = Calendar.getInstance().getTimeInMillis(); }
+        latestEndDate = newTask.getEndDate();
+        overlappingTasks = findOverlappingTasksInGivenTimeRange(now, newTask.getEndDate());
+        overlappingTasks.add(newTask);
+
+        for(Task t : tasks) {
+            //find the latestEndDate
+            if(t.getEndDate() > latestEndDate) {
+                latestEndDate = t.getEndDate();
+            }
+        }
+
+        //Clear the EmptySlots list
+        clearEmptySlots();
+        //Call the detectEmptySlots method to fill up the EmptySlots list
+        detectEmptySlotsDayByDay(cal, max(now, newTask.getStartDate()), latestEndDate);
+        //We calculate the task weights for the overlappingTasks.
+        calculateAndSetTaskWeights(overlappingTasks);
+        //Sort the overlappingTasks in ascending order of weight
+        Collections.sort(overlappingTasks);
+        //Get the total empty slot duration for each Task (the duration of empty time between now and the endDate of the Task)
+        for(Task t : overlappingTasks) {
+            long emptySlotsDuration = emptySlots.getTotalEmptySlotDuration(now, t.getEndDate());
+            System.out.println("empty time for Task " + t.getTitle() + " "
+                             + DateTools.msToHours(emptySlotsDuration));
+            if(t.estimatedRequiredTimeRemaining(now) > emptySlotsDuration) {
+                System.err.println("Task requires more time than empty slots available (without considering overlapping tasks)");
+            }
+        }
+
+        nbFtEventsForNewTask = newTask.estimatedRequiredTimeRemaining(now)/ONE_HOUR;
+    }
+
+    private static void calculateAndSetTaskWeights(ArrayList<Task> tasks) {
+        //for now, we're not taking into account the priority.
+        for(Task t : tasks) {
+            t.setWeight((double)t.estimatedRequiredTimeRemaining(now)/t.timeLeftToDueDate(now));
+            System.out.println("Task: " + t.getTitle() + "\t Weight = " + t.getWeight());
+        }
+    }
+
+    //prerequisites: startRange < endRage; t.startDate < t.endDate for every Task t;
+    public static ArrayList<Task> findOverlappingTasksInGivenTimeRange(long startRange, long endRange) {
+        ArrayList<Task> overlappingTasks = new ArrayList<Task>();
+        for (Task t : tasks) {
+            if(t.getStartDate() <= startRange) {
+                if(t.getEndDate() > startRange) {
+                    overlappingTasks.add(t);
+                }
+            }
+            else if (t.getStartDate() < endRange) {
+                overlappingTasks.add(t);
+            }
+        }
+
+
+        return overlappingTasks;
+    }
+
+
 
     public ArrayList<Task> getTasks() { return tasks; }
 

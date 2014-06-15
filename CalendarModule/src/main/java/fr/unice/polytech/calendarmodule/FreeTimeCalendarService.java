@@ -2,14 +2,10 @@ package fr.unice.polytech.calendarmodule;
 
 import android.annotation.TargetApi;
 import android.app.Service;
-import android.content.ContentProvider;
-import android.content.ContentResolver;
 import android.content.ContentUris;
 import android.content.ContentValues;
 import android.content.Intent;
 import android.database.Cursor;
-import android.database.sqlite.SQLiteOpenHelper;
-import android.database.sqlite.SQLiteQueryBuilder;
 import android.net.Uri;
 import android.os.Binder;
 import android.os.Build;
@@ -17,13 +13,11 @@ import android.os.IBinder;
 import android.provider.CalendarContract;
 import android.provider.CalendarContract.*;
 import android.util.Log;
-import android.widget.CursorAdapter;
 import android.widget.Toast;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.GregorianCalendar;
 import java.util.TimeZone;
 
 import fr.unice.polytech.freetimedatabase.FreeTimeDbContract;
@@ -235,9 +229,9 @@ public class FreeTimeCalendarService extends Service {
         if(cursor.getCount() == 0) {
             Log.i("FreeTime", "No events found");
             //If there are no event instances in a given time range, that whole time range is an empty slot
-            values.put(FreeTimeDbContract.UnoccupiedTime.COLUMN_START_TIME, beginRange);
-            values.put(FreeTimeDbContract.UnoccupiedTime.COLUMN_END_TIME, endRange);
-            db.getWritableDatabase().insert(FreeTimeDbContract.UnoccupiedTime.TABLE_NAME, null, values);
+            values.put(FreeTimeDbContract.EmptySlots.COLUMN_START_TIME, beginRange);
+            values.put(FreeTimeDbContract.EmptySlots.COLUMN_END_TIME, endRange);
+            db.getWritableDatabase().insert(FreeTimeDbContract.EmptySlots.TABLE_NAME, null, values);
             cursor.close();
         }
 
@@ -250,10 +244,10 @@ public class FreeTimeCalendarService extends Service {
                         + "  end: " + df.format(new Date(cursor.getLong(END))));
                 //the starttime of the first empty slot in a given time range is equal to the start time of that time range (beginRange)
                 //if there is no event instance that starts at time=beginRange
-                values.put(FreeTimeDbContract.UnoccupiedTime.COLUMN_START_TIME, beginRange);
+                values.put(FreeTimeDbContract.EmptySlots.COLUMN_START_TIME, beginRange);
                 //add the BEGIN time of the found instance as the endtime of the empty slot
-                values.put(FreeTimeDbContract.UnoccupiedTime.COLUMN_END_TIME, cursor.getLong(BEGIN));
-                db.getWritableDatabase().insert(FreeTimeDbContract.UnoccupiedTime.TABLE_NAME, null, values);
+                values.put(FreeTimeDbContract.EmptySlots.COLUMN_END_TIME, cursor.getLong(BEGIN));
+                db.getWritableDatabase().insert(FreeTimeDbContract.EmptySlots.TABLE_NAME, null, values);
                 long newBeginRange = cursor.getLong(END);
                 cursor.close();
                 findUnoccupiedTimeSlots(newBeginRange, endRange, db);

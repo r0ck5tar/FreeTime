@@ -27,9 +27,6 @@ public class Task {
     public static final int MIDDLE_PRIORITY = 2;
     public static final int LOW_PRIORITY = 1;
 
-
-
-
     private TASK_TYPE type;
     private String title;
     private String description;
