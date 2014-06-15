@@ -27,9 +27,9 @@ public class Task {
         this.priority = priority;
     }
 
-    public long timeLeftToDueDate(long now){ return now - endDate; }
+    public long timeLeftToDueDate(long now){ return endDate - now; }
     public long estimatedRequiredTimeRemaining(long now) {
-        return calculateTotalCompletedEventsTime(now) - timeEstimation;
+        return timeEstimation - calculateTotalCompletedEventsTime(now);
     }
 
     /*

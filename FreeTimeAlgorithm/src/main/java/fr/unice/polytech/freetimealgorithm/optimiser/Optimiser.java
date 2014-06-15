@@ -12,6 +12,8 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 
+import static java.lang.Math.max;
+
 /**
  * Created by Hakim on 13/06/14.
  */
@@ -97,13 +99,14 @@ public class Optimiser {
               This can be useful for tests.
             # First we get a list of the currentTasks. We also find the latestEndDate.
             # Before detecting the empty slots, we call clearEmptySlots(), to clear the list of the previously found slots;
-            # Then we find all the empty slots between now and latestEndDate, using detectEmptySlots(). We call this method
-              in a loop, gradually filling up the EmptySlots list with the EmptySlots detected for each 24 hour block between
-              now and latestEndDate.
+            # Then we find all the empty slots between now and latestEndDate, using detectEmptySlotsDayByDay().
+              We call this method which calls the detectEmptySlots() method  in a loop, gradually filling up the EmptySlots
+              list with the EmptySlots detected for each 24 hour block between now and latestEndDate.
          */
         if (now == 0 ) { now = Calendar.getInstance().getTimeInMillis(); }
         latestEndDate = newTask.getEndDate();
         currentTasks = new ArrayList<Task>();
+        currentTasks.add(newTask); //The newTask is also a current Task if its endDate is in the future
 
         for(Task t : tasks) {
             //find the currentTasks (Tasks that have a due date that is in the future (i.e. endDate > now)
@@ -120,7 +123,7 @@ public class Optimiser {
         clearEmptySlots();
 
         //Call the detectEmptySlots method to fill up the EmptySlots list
-        detectEmptySlotsDayByDay(cal, now, latestEndDate);
+        detectEmptySlotsDayByDay(cal, max(now, newTask.getStartDate()), latestEndDate);
 
         //We calculate the task weights for the currentTasks.
         calculateAndSetTaskWeights(currentTasks);
@@ -129,8 +132,10 @@ public class Optimiser {
     private static void calculateAndSetTaskWeights(ArrayList<Task> tasks) {
         //for now, we're not taking into account the priority.
         for(Task t : tasks) {
-            t.setWeight(t.estimatedRequiredTimeRemaining(now)/t.timeLeftToDueDate(now));
-            System.out.print("Task" + t.getTitle() + "\t Weight = " + t.getWeight());
+            long estimatedRemainingTime = t.estimatedRequiredTimeRemaining(now);
+            long timeLeftToDueDate = t.timeLeftToDueDate(now);
+            t.setWeight((double)t.estimatedRequiredTimeRemaining(now)/t.timeLeftToDueDate(now));
+            System.out.println("Task: " + t.getTitle() + "\t Weight = " + t.getWeight());
         }
     }
 
