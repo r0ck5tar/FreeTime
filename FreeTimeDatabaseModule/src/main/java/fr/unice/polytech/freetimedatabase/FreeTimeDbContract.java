@@ -19,8 +19,11 @@ public final class FreeTimeDbContract {
 
     public static abstract class Tasks implements BaseColumns {
         public static final String TABLE_NAME = "tasks";
+        public static final String COLUMN_TITLE = "title";
+        public static final String COLUMN_ESTIMATION = "estimation";
         public static final String COLUMN_START_DATE = "start_date";
         public static final String COLUMN_END_DATE = "end_date";
+        public static final String COLUMN_DESCRIPTION = "description";
         public static final String COLUMN_USER_PRIORITY = "priority";
         public static final String COLUMN_WEIGHT = "weight";
     }

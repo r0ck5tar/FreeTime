@@ -41,8 +41,11 @@ public class FreeTimeDbHelper extends SQLiteOpenHelper {
     private static final String SQL_CREATE_TASKS_TABLE =
             "CREATE TABLE " + Tasks.TABLE_NAME + "(" +
                     Tasks._ID + " INTEGER PRIMARY KEY, " +
+                    Tasks.COLUMN_TITLE + " TEXT, " +
                     Tasks.COLUMN_START_DATE + " INTEGER, " +
                     Tasks.COLUMN_END_DATE + " INTEGER, " +
+                    Tasks.COLUMN_DESCRIPTION + " TEXT, " +
+                    Tasks.COLUMN_ESTIMATION + " INTEGER, " +
                     Tasks.COLUMN_USER_PRIORITY + " INTEGER, " +
                     Tasks.COLUMN_WEIGHT + " INTEGER " +
                     ")";
