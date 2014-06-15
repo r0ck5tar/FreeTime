@@ -15,6 +15,10 @@ public class Event implements Comparable<Event>{
     }
 
     public String getTitle() { return title; }
+    public long getStartTime() {
+        return startTime;
+    }
+    public long getEndTime() { return endTime; }
 
     @Override
     public int compareTo(Event o) {
@@ -29,10 +33,4 @@ public class Event implements Comparable<Event>{
         //if(this.startTime > o.startTime) {return 1;}
         return 1;
     }
-
-    public long getStartTime() {
-        return startTime;
-    }
-
-    public long getEndTime() { return endTime; }
 }

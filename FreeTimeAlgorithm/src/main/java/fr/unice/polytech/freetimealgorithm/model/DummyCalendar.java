@@ -42,4 +42,8 @@ public class DummyCalendar {
 
         return null;
     }
+
+    public void clearEvents() {
+        events.clear();
+    }
 }

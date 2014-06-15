@@ -15,10 +15,13 @@ public class MainFrame extends JFrame {
     private TaskCreationPanel taskCreationPanel = new TaskCreationPanel();
     private TaskListPanel taskListPanel = new TaskListPanel();
     private CalendarEventsPanel calendarEventsPanel = new CalendarEventsPanel();
+    private CurrentTimePanel currentTimePanel = new CurrentTimePanel();
 
 
     public MainFrame() {
         setLayout(new BorderLayout());
+        JPanel controlPanels = new JPanel();
+
         JPanel eventControlPanel = new JPanel();
         eventControlPanel.setLayout(new BorderLayout());
         eventControlPanel.add(eventCreationPanel, BorderLayout.NORTH);
@@ -33,11 +36,15 @@ public class MainFrame extends JFrame {
         taskControlPanel.setBorder(new EmptyBorder(10, 10, 10, 10));
         taskListPanel.setBorder(new EmptyBorder(20, 0, 0, 0));
 
+        controlPanels.setLayout(new BorderLayout());
+        controlPanels.add(eventControlPanel, BorderLayout.WEST);
+        controlPanels.add(taskControlPanel, BorderLayout.EAST);
+
         calendarEventsPanel.setBorder(new EmptyBorder(10, 10, 10, 10));
 
-        add(eventControlPanel, BorderLayout.WEST);
-        add(taskControlPanel, BorderLayout.CENTER);
-        add(calendarEventsPanel, BorderLayout.EAST);
+        add(controlPanels, BorderLayout.WEST);
+        add(calendarEventsPanel, BorderLayout.CENTER);
+        add(currentTimePanel, BorderLayout.EAST);
 
         pack();
         setVisible(true);
@@ -48,6 +55,7 @@ public class MainFrame extends JFrame {
         eventCreationPanel.setListener(listener);
         emptySlotsPanel.setListener(listener);
         taskCreationPanel.setListener(listener);
+        calendarEventsPanel.setListener(listener);
     }
 
     public CalendarEventsPanel getCalendarEventsPanel() { return calendarEventsPanel; }

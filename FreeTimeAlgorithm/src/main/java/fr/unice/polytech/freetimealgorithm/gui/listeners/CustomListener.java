@@ -6,7 +6,9 @@ package fr.unice.polytech.freetimealgorithm.gui.listeners;
 public interface CustomListener {
     public void onAddEvent(String title, long start, long end);
 
-    void onDetectEmptySlotsButtonClick(long start, long end);
+    public void onDetectEmptySlotsButtonClick(long start, long end);
 
-    void onCreateNewTask(String title, long timeEstimation, long startDate, long endDate, int priority);
+    public void onCreateNewTask(String title, long timeEstimation, long startDate, long endDate, int priority);
+
+    public void onClearEvents();
 }

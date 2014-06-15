@@ -3,6 +3,7 @@ package fr.unice.polytech.freetimealgorithm.gui;
 import fr.unice.polytech.freetimealgorithm.gui.listeners.CustomListener;
 import fr.unice.polytech.freetimealgorithm.gui.listeners.OptimiserListener;
 import fr.unice.polytech.freetimealgorithm.optimiser.EmptySlots;
+import fr.unice.polytech.freetimealgorithm.optimiser.Optimiser;
 import fr.unice.polytech.freetimealgorithm.tools.DateTools;
 
 import javax.swing.*;
@@ -20,7 +21,7 @@ public class EmptySlotsPanel extends JPanel implements ActionListener, Optimiser
     private DatePicker endDatePicker = new DatePicker();
     private JTextArea emptySlotsDisplay = new JTextArea();
     private CustomListener listener;
-    private JButton clearButton = new JButton("Clear display");
+    private JButton clearButton = new JButton("Clear detected empty slots");
 
     public EmptySlotsPanel() {
         setLayout(new GridBagLayout());
@@ -81,12 +82,15 @@ public class EmptySlotsPanel extends JPanel implements ActionListener, Optimiser
             listener.onDetectEmptySlotsButtonClick(start, end);
         }
 
-        if(e.getSource().equals(clearButton)) { emptySlotsDisplay.setText(""); }
+        if(e.getSource().equals(clearButton)) {
+            emptySlotsDisplay.setText("");
+            Optimiser.clearEmptySlots();
+        }
     }
 
     @Override
     public void emptySlotsFound(ArrayList<EmptySlots.EmptySlot> emptySlots) {
-        emptySlotsDisplay.append("*******************************************\n");
+        emptySlotsDisplay.setText("*******************************************\n");
         for(EmptySlots.EmptySlot es : emptySlots) {
             emptySlotsDisplay.append(DateTools.print(es.getStartTime())
                                    + " until " + DateTools.print(es.getEndTime())+"\n\n");

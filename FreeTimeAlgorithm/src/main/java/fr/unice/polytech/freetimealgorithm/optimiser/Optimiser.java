@@ -5,9 +5,12 @@ import fr.unice.polytech.freetimealgorithm.model.DummyCalendar;
 import fr.unice.polytech.freetimealgorithm.model.Event;
 import fr.unice.polytech.freetimealgorithm.optimiser.EmptySlots.EmptySlot;
 import fr.unice.polytech.freetimealgorithm.model.Task;
+import fr.unice.polytech.freetimealgorithm.tools.DateTools;
 
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
+import java.util.GregorianCalendar;
 
 /**
  * Created by Hakim on 13/06/14.
@@ -33,13 +36,12 @@ public class Optimiser {
     private static long totalEstimatedTimeRequired;
     private static ArrayList<Task> currentTasks; //list of Tasks with endDate < now
 
+    public static void clearEmptySlots() { emptySlots.clearEmptySlots(); }
+
     /*
-        Detects the empty slots in the given time range. And EmptySlot is a range of time that is not occupied by an Event.
-        Calling this method clears the previously detected list of EmptySlots, before filling it up again.
+        Detects the empty slots in the given time range. An EmptySlot is a range of time that is not occupied by an Event.
      */
     public static ArrayList<EmptySlot> detectEmptySlots(DummyCalendar cal, long startTimeRange, long endTimeRange) {
-        emptySlots.clearEmptySlots();
-
         //all the Events between startTimeRange and endTimeRange (startTimeRange < event.startTime < endTimeRange)
         ArrayList<Event> detectedEvents = new ArrayList<Event>();
 
@@ -94,7 +96,10 @@ public class Optimiser {
             # The value of now can be set by calling Optimiser.setNow() before calling the other methods of this class.
               This can be useful for tests.
             # First we get a list of the currentTasks. We also find the latestEndDate.
-            # Then we find all the empty slots between now and latestEndDate, using detectEmptySlots().
+            # Before detecting the empty slots, we call clearEmptySlots(), to clear the list of the previously found slots;
+            # Then we find all the empty slots between now and latestEndDate, using detectEmptySlots(). We call this method
+              in a loop, gradually filling up the EmptySlots list with the EmptySlots detected for each 24 hour block between
+              now and latestEndDate.
          */
         if (now == 0 ) { now = Calendar.getInstance().getTimeInMillis(); }
         latestEndDate = newTask.getEndDate();
@@ -111,9 +116,11 @@ public class Optimiser {
             }
         }
 
-        //Call the detectEmptySlots method to fill up the EmptySlots list. Note that the EmptySlots list is cleared each
-        //time the detectEmptySlots method is called.
-        detectEmptySlots(cal, now, latestEndDate);
+        //Clear the EmptySlots list
+        clearEmptySlots();
+
+        //Call the detectEmptySlots method to fill up the EmptySlots list
+        detectEmptySlotsDayByDay(cal, now, latestEndDate);
 
         //We calculate the task weights for the currentTasks.
         calculateAndSetTaskWeights(currentTasks);
@@ -127,10 +134,41 @@ public class Optimiser {
         }
     }
 
+    private static void detectEmptySlotsDayByDay(DummyCalendar cal, long start, long end) {
+        final long TWENTY_FOUR_HOURS = DateTools.hoursToMilis(24);
+        final long ONE_SECOND = 1000;
+        GregorianCalendar gCal = new GregorianCalendar();
+        gCal.setTime(new Date(start));
+        GregorianCalendar firstDayEndTime = new GregorianCalendar();
+        firstDayEndTime.set(Calendar.YEAR, gCal.get(Calendar.YEAR));
+        firstDayEndTime.set(Calendar.MONTH, gCal.get(Calendar.MONTH));
+        firstDayEndTime.set(Calendar.DAY_OF_MONTH, gCal.get(Calendar.DAY_OF_MONTH));
+        firstDayEndTime.set(Calendar.HOUR, 23);
+        firstDayEndTime.set(Calendar.MINUTE, 59);
+        firstDayEndTime.set(Calendar.SECOND, 59);
+
+        detectEmptySlots(cal, start, firstDayEndTime.getTimeInMillis());
+        long nextDayStart = firstDayEndTime.getTimeInMillis()+ONE_SECOND;
+        long nextDayStop = firstDayEndTime.getTimeInMillis() + TWENTY_FOUR_HOURS;
+
+        while(nextDayStop < end) {
+            detectEmptySlots(cal, nextDayStart, nextDayStop);
+            nextDayStart = nextDayStop + ONE_SECOND;
+            nextDayStop = nextDayStop + TWENTY_FOUR_HOURS;
+        }
+
+        long lastDayStart = nextDayStart;
+        detectEmptySlots(cal, lastDayStart, end);
+
+    }
+
     public ArrayList<Task> getTasks() { return tasks; }
 
     public static void setListener(OptimiserListener listener) {
         Optimiser.listener = listener;
     }
     public static void setNow(long now) { Optimiser.now = now; }
+    public static long getNow() { return Optimiser.now; }
+
+    public static void clearTasks(){ tasks.clear();  }
 }
