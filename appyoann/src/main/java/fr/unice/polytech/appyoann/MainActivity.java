@@ -17,24 +17,18 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.CheckBox;
-import android.widget.EditText;
-import android.widget.RadioButton;
-import android.widget.RadioGroup;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.TimeZone;
 
 import fr.unice.polytech.calendarmodule.EventBuilder;
 import fr.unice.polytech.calendarmodule.FreeTimeCalendarService;
+import fr.unice.polytech.calendarmodule.IndexDayOutOfBoundException;
+import fr.unice.polytech.calendarmodule.IndexMonthOutOfBoundException;
 import fr.unice.polytech.calendarmodule.RecurrenceStringBuilder;
-import fr.unice.polytech.entities.Task;
-import fr.unice.polytech.entities.TaskBuilder;
-import fr.unice.polytech.entities.WrongEndTaskException;
-import fr.unice.polytech.entities.WrongStartTaskException;
 
 
 public class MainActivity extends Activity {
@@ -102,8 +96,100 @@ public class MainActivity extends Activity {
     private static final String DELETE_TEST_1 = "DELETE_TEST_1";
     private ArrayList<Long> eventsTest1;
     public ArrayList<String> init_rrule_test_1(){
-        return null;
-        //todo
+        GregorianCalendar g1 = new GregorianCalendar();
+        //g1.set(Calendar.DAY_OF_MONTH,g1.get(Calendar.DAY_OF_MONTH)+5);g1.set(Calendar.HOUR,0);g1.set(Calendar.MINUTE,0);g1.set(Calendar.SECOND,0);
+        System.out.println(g1);
+        GregorianCalendar g2 = new GregorianCalendar();
+        g2.set(Calendar.DAY_OF_MONTH,g2.get(Calendar.DAY_OF_MONTH)+5);g2.set(Calendar.HOUR,14);g2.set(Calendar.MINUTE,0);g2.set(Calendar.SECOND,0);
+
+        ArrayList<String> result = new ArrayList<String>();
+        RecurrenceStringBuilder rb1 = new RecurrenceStringBuilder().freqByDay().repetition(10);
+
+        RecurrenceStringBuilder rb2 = new RecurrenceStringBuilder().freqByDay().until(g1);
+
+        RecurrenceStringBuilder rb3 = new RecurrenceStringBuilder().freqByDay().interval(2);
+
+        RecurrenceStringBuilder rb4 = new RecurrenceStringBuilder().freqByDay().interval(2).repetition(5);
+
+        RecurrenceStringBuilder rb5=null;
+        try {
+            rb5 = new RecurrenceStringBuilder().freqByYear().until(g2).byMonth(RecurrenceStringBuilder.JANUARY)
+                    .byDay(RecurrenceStringBuilder.SUNDAY).byDay(RecurrenceStringBuilder.MONDAY)
+                    .byDay(RecurrenceStringBuilder.TUESDAY).byDay(RecurrenceStringBuilder.WEDNESDAY)
+                    .byDay(RecurrenceStringBuilder.THURSDAY)
+                    .byDay(RecurrenceStringBuilder.FRIDAY).byDay(RecurrenceStringBuilder.SATURDAY);
+        } catch (IndexDayOutOfBoundException e) {
+            e.printStackTrace();
+        } catch (IndexMonthOutOfBoundException e) {
+            e.printStackTrace();
+        }
+
+        RecurrenceStringBuilder rb6 = null;
+        try {
+            rb6 = new RecurrenceStringBuilder().freqByDay().until(g2).byMonth(RecurrenceStringBuilder.JANUARY);
+        } catch (IndexMonthOutOfBoundException e) {
+            e.printStackTrace();
+        }
+
+        RecurrenceStringBuilder rb7 = new RecurrenceStringBuilder().freqByWeek().repetition(10);
+
+        RecurrenceStringBuilder rb8 = new RecurrenceStringBuilder().freqByWeek().until(g1);
+
+        RecurrenceStringBuilder rb9 = null;
+        try {
+            rb9 = new RecurrenceStringBuilder().freqByDay().interval(2).weekStart(RecurrenceStringBuilder.SUNDAY);
+        } catch (IndexDayOutOfBoundException e) {
+            e.printStackTrace();
+        }
+
+        RecurrenceStringBuilder rb10 = null;
+        try {
+            rb10 = new RecurrenceStringBuilder().freqByWeek().until(g1)
+                    .byDay(RecurrenceStringBuilder.TUESDAY).byDay(RecurrenceStringBuilder.THURSDAY);
+        } catch (IndexDayOutOfBoundException e) {
+            e.printStackTrace();
+        }
+
+        RecurrenceStringBuilder rb11 = null;
+        try {
+            rb11 = new RecurrenceStringBuilder().freqByWeek().repetition(10).weekStart(RecurrenceStringBuilder.SUNDAY)
+                    .byDay(RecurrenceStringBuilder.TUESDAY).byDay(RecurrenceStringBuilder.THURSDAY);
+        } catch (IndexDayOutOfBoundException e) {
+            e.printStackTrace();
+        }
+
+        RecurrenceStringBuilder rb12 = null;
+        try {
+            rb12 = new RecurrenceStringBuilder().freqByWeek().interval(2).until(g1)
+                    .weekStart(RecurrenceStringBuilder.SUNDAY)
+                    .byDay(RecurrenceStringBuilder.MONDAY).byDay(RecurrenceStringBuilder.WEDNESDAY)
+                    .byDay(RecurrenceStringBuilder.FRIDAY);
+        } catch (IndexDayOutOfBoundException e) {
+            e.printStackTrace();
+        }
+        RecurrenceStringBuilder rb13 = new RecurrenceStringBuilder();
+        rb13.freqByDay().byHour(9).byHour(10).byHour(11).byHour(12)
+                .byHour(13).byHour(14).byHour(15).byHour(16)
+                .byMinute(0).byMinute(20).byMinute(40);
+
+        RecurrenceStringBuilder rb14 = new RecurrenceStringBuilder();
+        rb14.freqByMinute().interval(20).byHour(9).byHour(10).byHour(11)
+                .byHour(12).byHour(13).byHour(14).byHour(15).byHour(16);
+
+        result.add(rb1.getRRule());
+        result.add(rb2.getRRule());
+        result.add(rb3.getRRule());
+        result.add(rb4.getRRule());
+        result.add(rb5.getRRule());
+        result.add(rb6.getRRule());
+        result.add(rb7.getRRule());
+        result.add(rb8.getRRule());
+        result.add(rb9.getRRule());
+        result.add(rb10.getRRule());
+        result.add(rb11.getRRule());
+        result.add(rb12.getRRule());
+        return result;
+
     }
     public void onClickTest_1(View view){
         //First we delete the test 1
@@ -114,33 +200,27 @@ public class MainActivity extends Activity {
             System.out.println("Reading Calendar");
             idCalendar = ftcService.getFreeTimeCalendarId();
             System.out.println(idCalendar);
+            eventsTest1 = new ArrayList<>();
         }
 
-/*
-        EventBuilder test1= new EventBuilder(idCalendar);
-        EventBuilder result= new EventBuilder(idCalendar);
-        EventBuilder result= new EventBuilder(idCalendar);
-        EventBuilder result= new EventBuilder(idCalendar);
-        EventBuilder result= new EventBuilder(idCalendar);
-        EventBuilder result= new EventBuilder(idCalendar);
-        EventBuilder result= new EventBuilder(idCalendar);
-        EventBuilder result= new EventBuilder(idCalendar);
-        EventBuilder result= new EventBuilder(idCalendar);
-        EventBuilder result= new EventBuilder(idCalendar);
-        EventBuilder result= new EventBuilder(idCalendar);
-        EventBuilder result= new EventBuilder(idCalendar);
-*/
+        int i=0;
+        EventBuilder event=null;
+        GregorianCalendar g = new GregorianCalendar();
+        g.set(Calendar.HOUR,0);g.set(Calendar.MINUTE,0);g.set(Calendar.SECOND,0);
 
-
-        EventBuilder result= new EventBuilder(idCalendar);
-        result.createEvent("TEST");
-        result.startY(2014).startM(5).startD(15).startH(8).finalizeStartTime();
-        result.description("toto");
-        result.timeZone(TimeZone.getDefault().getID());
-        //result.rRule(new RecurrenceStringBuilder().freqByDay().repetition(10).getRRule());
-        result.rRule("FREQ=DAILY;BYHOUR=8,16;COUNT=5");
-        result.duration("PT15M");
-        eventsTest1.add(result.finalizeEvent(getContentResolver()));
+        for(String rrule : init_rrule_test_1()) {
+            event = new EventBuilder(idCalendar);
+            //event.color("blue");
+            event.availability(CalendarContract.Events.AVAILABILITY_FREE);
+            event.createEvent("TEST"+(i+1));
+            event.startDT(g.getTimeInMillis()).finalizeStartTime();
+            event.description("test n°" + i);
+            event.timeZone(TimeZone.getDefault().getID());
+            event.rRule(rrule);
+            event.duration("PT15M");
+            eventsTest1.add(event.finalizeEvent(getContentResolver()));
+            i++;
+        }
 
     }
 
@@ -149,13 +229,12 @@ public class MainActivity extends Activity {
             return;
         }
         for(Long eventID : eventsTest1){
-            ContentResolver cr = getContentResolver();
-            ContentValues values = new ContentValues();
             Uri deleteUri = null;
             deleteUri = ContentUris.withAppendedId(CalendarContract.Events.CONTENT_URI, eventID);
             int rows = getContentResolver().delete(deleteUri, null, null);
             Log.i(DELETE_TEST_1, "Rows deleted: " + rows);
         }
+        eventsTest1.removeAll(eventsTest1);
     }
 
     public GregorianCalendar stringToCalendar(String s){

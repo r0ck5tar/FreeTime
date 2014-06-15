@@ -56,7 +56,7 @@ public class RecurrenceStringBuilder {
     public static final int FRIDAY      = 5;
     public static final int SATURDAY    = 6;
     //Month
-    private static final String[] MONTH = {"1","2","3","4","5","6","7","8","9","10","11","12"};
+    private static final String[] MONTH = {"01","02","03","04","05","06","07","08","09","10","11","12"};
     public static final int JANUARY    = 0;
     public static final int FEBRUARY   = 1;
     public static final int MARCH      = 2;

@@ -76,6 +76,8 @@ public class EventBuilder {
     public EventBuilder duration(String duration){values.put(Events.DURATION,duration);return this;}
     public EventBuilder rRule(String rRule) { values.put(Events.RRULE, rRule); return this; }
 
+    public EventBuilder color(String colors){ values.put(Events.EVENT_COLOR_KEY,colors); return this;}
+
     public long finalizeEvent(ContentResolver contentResolver) {
         Uri uri = contentResolver.insert(Events.CONTENT_URI, values);
         long eventId = new Long(uri.getLastPathSegment());
