@@ -16,12 +16,10 @@ import fr.unice.polytech.freetimedatabase.FreeTimeDbHelper;
 /**
  * Created by Hakim on 15/06/2014.
  */
-public class TaskDataSource {
+public class TaskDataSource extends DataSource {
     public static final double DEFAULT_WEIGHT = 0;
 
-    //Database fields
-    private SQLiteDatabase database;
-    private FreeTimeDbHelper ftDbHelper;
+    //Table columns
     public static String[] ALL_COLUMNS = {Tasks._ID, Tasks.COLUMN_TITLE,
                                    Tasks.COLUMN_START_DATE, Tasks.COLUMN_END_DATE,
                                    Tasks.COLUMN_ESTIMATION, Tasks.COLUMN_DESCRIPTION,
@@ -30,11 +28,8 @@ public class TaskDataSource {
                       DESCRIPTION = 5, PRIORITY = 6, WEIGHT = 7;
 
     public TaskDataSource(Context context) {
-        ftDbHelper = new FreeTimeDbHelper(context);
+        super(context);
     }
-
-    public void open()  { database = ftDbHelper.getWritableDatabase(); }
-    public void close() { ftDbHelper.close(); }
 
     public Task createTask(String title, String description, Calendar startDate, Calendar endDate,
                            int hourEstimation, int priority) {
@@ -90,4 +85,6 @@ public class TaskDataSource {
                        .setWeight(cursor.getDouble(WEIGHT));
     }
 
+    public void open()  { super.open(); }
+    public void close() { super.close(); }
 }

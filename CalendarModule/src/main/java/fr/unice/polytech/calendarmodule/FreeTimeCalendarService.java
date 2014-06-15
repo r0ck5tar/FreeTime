@@ -20,6 +20,8 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.TimeZone;
 
+import fr.unice.polytech.datasources.EmptySlotDataSource;
+import fr.unice.polytech.entities.EmptySlot;
 import fr.unice.polytech.freetimedatabase.FreeTimeDbContract;
 import fr.unice.polytech.freetimedatabase.FreeTimeDbHelper;
 
@@ -185,25 +187,23 @@ public class FreeTimeCalendarService extends Service {
                .finalizeEvent(getContentResolver());
     }
 
-    public void findUnoccupiedTimeSlots(long beginRange, long endRange, FreeTimeDbHelper db) {
+    public void findUnoccupiedTimeSlots(long beginRange, long endRange, EmptySlotDataSource ds) {
 
         String[] projection = new String[] {
                 Instances._ID, Instances.BEGIN, Instances.END, Instances.EVENT_ID, Instances.CALENDAR_ID, Instances.TITLE
         };
 
         String selection = CalendarContract.Instances.CALENDAR_ID + " = ? AND " + Instances.BEGIN + " > ? " ;
-        String[] selArgs = new String[]{String.valueOf(freeTimeCalendarId), String.valueOf(beginRange)};
 
+        EmptySlotDataSource emptySlotDS;
 
-        FreeTimeDbHelper freeTimeDbHelper;
+        if(ds == null) { emptySlotDS = new EmptySlotDataSource(getApplicationContext()); }
+        else { emptySlotDS = ds; }
 
-        if(db == null) { freeTimeDbHelper = new FreeTimeDbHelper(getApplicationContext()); }
-        else { freeTimeDbHelper = db; }
-
-        findUnoccupiedTimeSlots(projection, selection, beginRange, endRange, freeTimeDbHelper);
+        findUnoccupiedTimeSlots(projection, selection, beginRange, endRange, emptySlotDS);
     }
 
-    private void findUnoccupiedTimeSlots(String[] projection, String selection, long beginRange, long endRange, FreeTimeDbHelper db) {
+    private void findUnoccupiedTimeSlots(String[] projection, String selection, long beginRange, long endRange, EmptySlotDataSource emptySlotDS) {
         String[] selArgs = new String[]{String.valueOf(freeTimeCalendarId), String.valueOf(beginRange)};
 
         SimpleDateFormat df = new SimpleDateFormat("yyyy.MM.dd 'at' HH:mm:ss z");
@@ -229,9 +229,9 @@ public class FreeTimeCalendarService extends Service {
         if(cursor.getCount() == 0) {
             Log.i("FreeTime", "No events found");
             //If there are no event instances in a given time range, that whole time range is an empty slot
-            values.put(FreeTimeDbContract.EmptySlots.COLUMN_START_TIME, beginRange);
-            values.put(FreeTimeDbContract.EmptySlots.COLUMN_END_TIME, endRange);
-            db.getWritableDatabase().insert(FreeTimeDbContract.EmptySlots.TABLE_NAME, null, values);
+            emptySlotDS.open();
+            emptySlotDS.createEmptySlot(beginRange, endRange);
+            emptySlotDS.close();
             cursor.close();
         }
 
@@ -244,13 +244,13 @@ public class FreeTimeCalendarService extends Service {
                         + "  end: " + df.format(new Date(cursor.getLong(END))));
                 //the starttime of the first empty slot in a given time range is equal to the start time of that time range (beginRange)
                 //if there is no event instance that starts at time=beginRange
-                values.put(FreeTimeDbContract.EmptySlots.COLUMN_START_TIME, beginRange);
                 //add the BEGIN time of the found instance as the endtime of the empty slot
-                values.put(FreeTimeDbContract.EmptySlots.COLUMN_END_TIME, cursor.getLong(BEGIN));
-                db.getWritableDatabase().insert(FreeTimeDbContract.EmptySlots.TABLE_NAME, null, values);
+                emptySlotDS.open();
+                emptySlotDS.createEmptySlot(beginRange, cursor.getLong(BEGIN));
+                emptySlotDS.close();
                 long newBeginRange = cursor.getLong(END);
                 cursor.close();
-                findUnoccupiedTimeSlots(newBeginRange, endRange, db);
+                findUnoccupiedTimeSlots(newBeginRange, endRange, emptySlotDS);
             }
             else {
                 Log.d("findUnoccupiedTimeSlots", "event found = " + cursor.getString(TITLE)
@@ -258,7 +258,7 @@ public class FreeTimeCalendarService extends Service {
                         + "  end: " + df.format(new Date(cursor.getLong(END))));
                 long newBeginRange = cursor.getLong(END);
                 cursor.close();
-                findUnoccupiedTimeSlots(newBeginRange, endRange, db);
+                findUnoccupiedTimeSlots(newBeginRange, endRange, emptySlotDS);
             }
         }
     }
