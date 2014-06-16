@@ -49,6 +49,13 @@ public class FreeTimeCalendarServiceTest extends ServiceTestCase<FreeTimeCalenda
         EmptySlotDataSource ds = new EmptySlotDataSource(context);
         //ds.clearEmptySlotTable();
         ftcService.findUnoccupiedTimeSlots(calStart.getTimeInMillis(), calEnd.getTimeInMillis(), ds);
+
+        Cursor cursor = ftcService.findEventByTitle("Recurring");
+        cursor.moveToFirst();
+
+        String rrule = cursor.getString(2);
+
+        System.out.println(rrule);
     }
 
     public void testFindEvents() throws Exception {

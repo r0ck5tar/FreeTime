@@ -20,6 +20,8 @@ import java.util.Date;
 import java.util.TimeZone;
 
 import fr.unice.polytech.datasources.EmptySlotDataSource;
+import fr.unice.polytech.datasources.FreeTimeBlockDataSource;
+import fr.unice.polytech.entities.FreeTimeBlockEntity;
 
 /**
  * Created by Hakim on 5/6/2014.
@@ -82,9 +84,32 @@ public class FreeTimeCalendarService extends Service {
         }
     }
 
+    //the startTime and endTime are complete dates. if the startTime is a Monday,
+    //the recurring FreeTimeBlock happens every Monday on the same time.
     public void addFreeTimeBlock(String day, long startTime, long endTime) {
+        final String FREE_TIME_EVENT_NAME = "Free Time";
+        //use RecurrenceStringBuilder to create the rRule
+        /*
+            Examples :
 
+            FREQ=WEEKLY;UNTIL=20190626T110000Z;WKST=MO;BYDAY=FR
+            Every Friday, 13:00 - 14:00
+            first define Friday, 27th June (repeat for 5 years)
 
+            FREQ=WEEKLY;UNTIL=20190626T110000Z;WKST=MO;BYDAY=FR
+            Every Friday, 14:00 - 15:00
+            first define Friday, 27th June (repeat for 5 years)
+         */
+        String rRule = null; //TODO = RecurrenceStringBuilder.xxxx();
+        
+        //use the EventBuilder to create an event, set the rRule, get the id of the newly created event
+        long newEventId = new EventBuilder(freeTimeCalendarId)
+                              .createEvent(FREE_TIME_EVENT_NAME).startDT(startTime).endDT(endTime)
+                              .rRule(rRule).finalizeEvent(getContentResolver());
+
+        //use the FreeTimeBlockDataSource to create and persist the freeTimeBlock
+        FreeTimeBlockDataSource dataSource = new FreeTimeBlockDataSource(getApplicationContext());
+        dataSource.createFreeTimeBlock(day, startTime, endTime, newEventId);
     }
 
     public void createRecurringTask(String title, int[] days, long startTime, long endTime) {
@@ -131,6 +156,16 @@ public class FreeTimeCalendarService extends Service {
                 .availability(available? Events.AVAILABILITY_FREE:Events.AVAILABILITY_BUSY)
                 //.organizer("demo@freetime.com")
                 .finalizeEvent(getContentResolver());
+    }
+
+    public Cursor findEventByTitle(String title){
+        String[] projection = {Events._ID, Events.TITLE, Events.RRULE, Events.DESCRIPTION,
+                                       Events.DTSTART, Events.DTEND, Events.AVAILABILITY, Events.DURATION,};
+        String selection = Events.TITLE + " = ? ";
+        String[]selArgs = new String[] {title};
+        Cursor cursor = getContentResolver().query(Events.CONTENT_URI, projection, selection, selArgs, null);
+
+        return cursor;
     }
 
 
