@@ -41,15 +41,14 @@ public class FreeTimeCalendarServiceTest extends ServiceTestCase<FreeTimeCalenda
 
     public void testFindEmptySlots() throws Exception {
 
-
         Calendar calStart = new GregorianCalendar(2014, 5, 11, 0, 0, 0);
         Calendar calEnd = new GregorianCalendar(2014, 5, 11, 23, 59, 0);
         //ftcService.createEvent("Test Event", calStart, calEnd);
 
         RenamingDelegatingContext context = new RenamingDelegatingContext(getContext(), "test_");
         EmptySlotDataSource ds = new EmptySlotDataSource(context);
-        ds.clearEmptySlotTable();
-        //ftcService.findUnoccupiedTimeSlots(calStart.getTimeInMillis(), calEnd.getTimeInMillis(), ds);
+        //ds.clearEmptySlotTable();
+        ftcService.findUnoccupiedTimeSlots(calStart.getTimeInMillis(), calEnd.getTimeInMillis(), ds);
     }
 
     public void testFindEvents() throws Exception {

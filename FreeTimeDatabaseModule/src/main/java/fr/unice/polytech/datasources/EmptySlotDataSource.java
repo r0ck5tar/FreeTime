@@ -29,12 +29,14 @@ public class EmptySlotDataSource extends DataSource {
         values.put(EmptySlots.COLUMN_START_TIME, startTime);
         values.put(EmptySlots.COLUMN_END_TIME, endTime);
 
+        open();
         long insertId = database.insert(EmptySlots.TABLE_NAME, null, values);
         Cursor cursor = database.query(EmptySlots.TABLE_NAME, ALL_COLUMNS, EmptySlots._ID + " = "
                                        + insertId, null, null, null, null);
         cursor.moveToFirst();
         EmptySlot newEmptySlot = cursorToEmptySlot(cursor);
         cursor.close();
+        close();
         return newEmptySlot;
     }
 
