@@ -36,10 +36,11 @@ public final class FreeTimeDbContract {
 
     }
 
-    public static abstract class FreeTimeBlock implements BaseColumns {
+    public static abstract class FreeTimeBlocks implements BaseColumns {
         public static final String TABLE_NAME = "freetimeblock";
-        //public static final String COLUMN_ID = BaseColumns._ID;
-        public static final String COLUMN_START_TIME = "starttime";
-        public static final String COLUMN_END_TIME = "endtime";
+        public static final String COLUMN_DAY = "day";
+        public static final String COLUMN_EVENT_ID = "event_id";
+        public static final String COLUMN_START_TIME = "start_time";
+        public static final String COLUMN_END_TIME = "end_time";
     }
 }

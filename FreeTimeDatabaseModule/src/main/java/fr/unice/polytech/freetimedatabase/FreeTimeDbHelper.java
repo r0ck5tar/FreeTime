@@ -27,10 +27,12 @@ public class FreeTimeDbHelper extends SQLiteOpenHelper {
 
     //region freetime_block table SQL code
     private static final String SQL_CREATE_FREETIME_BLOCK_TABLE =
-            "CREATE TABLE " + FreeTimeBlock.TABLE_NAME + "(" +
-            FreeTimeBlock._ID + " INTEGER PRIMARY KEY, " +
-            FreeTimeBlock.COLUMN_START_TIME + " INTEGER, " +
-            FreeTimeBlock.COLUMN_END_TIME + " INTEGER" +
+            "CREATE TABLE " + FreeTimeBlocks.TABLE_NAME + "(" +
+            FreeTimeBlocks._ID + " INTEGER PRIMARY KEY, " +
+            FreeTimeBlocks.COLUMN_DAY + " TEXT, " +
+            FreeTimeBlocks.COLUMN_EVENT_ID + " INTEGER, " +
+            FreeTimeBlocks.COLUMN_START_TIME + " INTEGER, " +
+            FreeTimeBlocks.COLUMN_END_TIME + " INTEGER" +
             ")";
 
     private static final String SQL_DELETE_FREETIME_BLOCK_TABLE =

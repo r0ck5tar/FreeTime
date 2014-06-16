@@ -84,6 +84,7 @@ public class FreeTimeCalendarService extends Service {
 
     public void addFreeTimeBlock(String day, long startTime, long endTime) {
 
+
     }
 
     public void createRecurringTask(String title, int[] days, long startTime, long endTime) {

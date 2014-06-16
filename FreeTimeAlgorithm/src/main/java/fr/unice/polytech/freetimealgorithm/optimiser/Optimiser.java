@@ -162,6 +162,8 @@ public class Optimiser {
         }
 
         nbFtEventsForNewTask = newTask.estimatedRequiredTimeRemaining(now)/ONE_HOUR;
+
+        //TODO the rest of the algorithm : iterate through the tasks, split them into FtEvents, place the events in the calendar.
     }
 
     private static void calculateAndSetTaskWeights(ArrayList<Task> tasks) {
