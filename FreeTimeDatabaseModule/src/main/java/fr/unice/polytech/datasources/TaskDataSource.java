@@ -3,15 +3,13 @@ package fr.unice.polytech.datasources;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
 
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
-import fr.unice.polytech.entities.Task;
+import fr.unice.polytech.entities.TaskEntity;
 import fr.unice.polytech.freetimedatabase.FreeTimeDbContract.*;
-import fr.unice.polytech.freetimedatabase.FreeTimeDbHelper;
 
 /**
  * Created by Hakim on 15/06/2014.
@@ -31,7 +29,7 @@ public class TaskDataSource extends DataSource {
         super(context);
     }
 
-    public Task createTask(String title, String description, Calendar startDate, Calendar endDate,
+    public TaskEntity createTask(String title, String description, Calendar startDate, Calendar endDate,
                            int hourEstimation, int priority) {
         ContentValues values = new ContentValues();
         values.put(Tasks.COLUMN_TITLE, title);
@@ -49,19 +47,19 @@ public class TaskDataSource extends DataSource {
                 ALL_COLUMNS, Tasks._ID + " = " + insertId, null,
                 null, null, null);
         cursor.moveToFirst();
-        Task newTask = cursorToTask(cursor);
+        TaskEntity newTask = cursorToTask(cursor);
         cursor.close();
         return newTask;
     }
 
-    public void deleteTask(Task task) {
+    public void deleteTask(TaskEntity task) {
         long id = task.getId();
         System.out.println("Task deleted with id: " + id);
         database.delete(Tasks.TABLE_NAME, Tasks._ID + " = " + id, null);
     }
 
-    public List<Task> getAllTasks() {
-        List<Task> tasks = new ArrayList<Task>();
+    public List<TaskEntity> getAllTasks() {
+        List<TaskEntity> tasks = new ArrayList<TaskEntity>();
 
         Cursor cursor = database.query(Tasks.TABLE_NAME,
                 ALL_COLUMNS, null, null, null, null, null);
@@ -76,8 +74,8 @@ public class TaskDataSource extends DataSource {
         return tasks;
     }
 
-    public Task cursorToTask(Cursor cursor) {
-        return new Task(cursor.getLong(ID), cursor.getString(TITLE),
+    public TaskEntity cursorToTask(Cursor cursor) {
+        return new TaskEntity(cursor.getLong(ID), cursor.getString(TITLE),
                         cursor.getLong(START), cursor.getLong(END))
                        .setDescription(cursor.getString(DESCRIPTION))
                        .setHourEstimation(cursor.getLong(ESTIMATION))

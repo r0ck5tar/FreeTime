@@ -5,10 +5,9 @@ import android.content.Context;
 import android.database.Cursor;
 
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.List;
 
-import fr.unice.polytech.entities.EmptySlot;
+import fr.unice.polytech.entities.EmptySlotEntity;
 import fr.unice.polytech.freetimedatabase.FreeTimeDbContract.EmptySlots;
 
 /**
@@ -24,7 +23,7 @@ public class EmptySlotDataSource extends DataSource {
 
     public final int ID = 0, START = 1, END = 2;
 
-    public EmptySlot createEmptySlot(long startTime, long endTime){
+    public EmptySlotEntity createEmptySlot(long startTime, long endTime){
         ContentValues values = new ContentValues();
         values.put(EmptySlots.COLUMN_START_TIME, startTime);
         values.put(EmptySlots.COLUMN_END_TIME, endTime);
@@ -34,20 +33,20 @@ public class EmptySlotDataSource extends DataSource {
         Cursor cursor = database.query(EmptySlots.TABLE_NAME, ALL_COLUMNS, EmptySlots._ID + " = "
                                        + insertId, null, null, null, null);
         cursor.moveToFirst();
-        EmptySlot newEmptySlot = cursorToEmptySlot(cursor);
+        EmptySlotEntity newEmptySlot = cursorToEmptySlot(cursor);
         cursor.close();
         close();
         return newEmptySlot;
     }
 
-    public void deleteEmptySlot(EmptySlot emptySlot) {
+    public void deleteEmptySlot(EmptySlotEntity emptySlot) {
         long id = emptySlot.getId();
         System.out.println("EmptySlot deleted with id: " + id);
         database.delete(EmptySlots.TABLE_NAME, EmptySlots._ID + " = " + id, null);
     }
 
-    public List<EmptySlot> getAllEmptySlots() {
-        List<EmptySlot> emptySlots = new ArrayList<EmptySlot>();
+    public List<EmptySlotEntity> getAllEmptySlots() {
+        List<EmptySlotEntity> emptySlots = new ArrayList<EmptySlotEntity>();
 
         Cursor cursor = database.query(EmptySlots.TABLE_NAME,
                 ALL_COLUMNS, null, null, null, null, null);
@@ -68,7 +67,7 @@ public class EmptySlotDataSource extends DataSource {
         close();
     }
 
-    private EmptySlot cursorToEmptySlot(Cursor cursor) {
-        return new EmptySlot(cursor.getLong(ID), cursor.getLong(START), cursor.getLong(END));
+    private EmptySlotEntity cursorToEmptySlot(Cursor cursor) {
+        return new EmptySlotEntity(cursor.getLong(ID), cursor.getLong(START), cursor.getLong(END));
     }
 }

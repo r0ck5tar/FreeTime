@@ -16,14 +16,10 @@ import android.util.Log;
 import android.widget.Toast;
 
 import java.text.SimpleDateFormat;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.TimeZone;
 
 import fr.unice.polytech.datasources.EmptySlotDataSource;
-import fr.unice.polytech.entities.EmptySlot;
-import fr.unice.polytech.freetimedatabase.FreeTimeDbContract;
-import fr.unice.polytech.freetimedatabase.FreeTimeDbHelper;
 
 /**
  * Created by Hakim on 5/6/2014.
