@@ -112,7 +112,12 @@ public class FreeTimeCalendarService extends Service {
         dataSource.createFreeTimeBlock(day, startTime, endTime, newEventId);
     }
 
-    public void createRecurringTask(String title, int[] days, long startTime, long endTime) {
+    //The startTime is also the recurrenceStartTime
+    public void createRecurringTask(String title, int[] days, long startTime, long endTime, long recurrenceEndTime) {
+
+    }
+
+    public void createOneTimeTask(String title, long startTime, long endTime ) {
 
     }
 
